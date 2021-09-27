@@ -1,32 +1,26 @@
 """ScaraController controller."""
-
-# You may need to import some classes of the controller module. Ex:
-#  from controller import Robot, Motor, DistanceSensor
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('..', 'App')))
+import threading
+from App import App
+import json
 from controller import Robot
 
 # create the Robot instance.
 robot = Robot()
+timestep = 64
 
-# get the time step of the current world.
-timestep = int(robot.getBasicTimeStep())
+with open('..\App\Features.json') as json_file:
+    data = json.load(json_file)
 
-# You should insert a getDevice-like function in order to get the
-# instance of a device of the robot. Something like:
-#  motor = robot.getDevice('motorname')
-#  ds = robot.getDevice('dsname')
-#  ds.enable(timestep)
+window2 = App(data['SCARA'][0])
 
-# Main loop:
-# - perform simulation steps until Webots is stopping the controller
-while robot.step(timestep) != -1:
-    # Read the sensors:
-    # Enter here functions to read sensor data, like:
-    #  val = ds.getValue()
-
-    # Process sensor data here.
-
-    # Enter here functions to send actuator commands, like:
-    #  motor.setPosition(10.0)
-    pass
+def runMethod2():
+    while robot.step(timestep) != -1:
+       pass
+        
+hilo_main2 = threading.Thread(target=runMethod2, daemon=True)
+hilo_main2.start()
 
 # Enter here exit cleanup code.
+window2.mainloop()

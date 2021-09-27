@@ -5,8 +5,9 @@ sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import App
 import json
 from controller import Robot
+import threading
 
-#from controller import Robot
+from controller import Robot
 
 # create the Robot instance.
 robot = Robot()
@@ -22,30 +23,14 @@ with open('..\App\Features.json') as json_file:
 
 window = App(data['Antropomorfico'][0])
 
-# get the time step of the current world.
-#timestep = int(robot.getBasicTimeStep())
 
-# You should insert a getDevice-like function in order to get the
-# instance of a device of the robot. Something like:
-#  motor = robot.getDevice('motorname')
-#  ds = robot.getDevice('dsname')
-#  ds.enable(timestep)
+def runMethod():
+    while robot.step(timestep) != -1:
+       pass
+        
+hilo_main = threading.Thread(target=runMethod, daemon=True)
+hilo_main.start()
 
-
-# Main loop:
-# - perform simulation steps until Webots is stopping the controller
-#while robot.step(timestep) != -1: 
-    # Read the sensors:
-    # Enter here functions to read sensor data, like:
-    #  val = ds.getValue()
-
-    # Process sensor data here.
-
-    # Enter here functions to send actuator commands, like:
-    #  motor.setPosition(10.0)
-    #pass
-
-# Enter here exit cleanup code.
 
 window.mainloop()
 
