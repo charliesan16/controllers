@@ -1,0 +1,26 @@
+{
+    "Antropomorfico":
+    [
+        {
+            "width":"1366",
+            "height":"768",
+            "robotName":"Antropomorfico",
+            "imagePath":"../App/Antropomorf.png",
+            "tituloArticulacion1":"Titulo1",
+            "tituloArticulacion2":"Titulo2",
+            "tituloArticulacion3":"Titulo3"
+        }
+    ],
+    "SCARA":
+    [
+        {
+            "width":"1366",
+            "height":"768",
+            "robotName":"SCARA",
+            "imagePath":"../App/SCARA.png",
+            "tituloArticulacion1":"Titulo1",
+            "tituloArticulacion2":"Titulo2",
+            "tituloArticulacion3":"Titulo3"
+        }
+    ]
+}
