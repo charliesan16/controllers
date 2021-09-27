@@ -20,13 +20,24 @@ class App(Tk):
         self._art1Name = features['tituloArticulacion1']
         self._art2Name = features['tituloArticulacion2']
         self._art3Name = features['tituloArticulacion3']
+        self.__titleColor = features['titleColor']
+        self.__frameColor = features['frameColor']
+        self.__frameInverserColor = features['frameInverserColor']
+        self.__boxColor = features['boxColor']
+        self.__buttonColor = features['buttonColor']
+        self.__fontColor = features['fontColor']
+        self.__fontColorInverse = features['fontColorInverse']
+        self.__fontColorButton = features['fontColorButton']
+        self.__bottomFrameColor = features['bottomFrameColor']
+        self.__bottomFontColor = features['bottomFontColor']
+        self.__imageFrameColor = features['imageFrameColor']
         self.__frameset()
         
 
     def __frameset(self):
         self.geometry(self.dimension)
         self.title(self.name)
-        #self.resizable(width=False, height=False)
+        self.resizable(width=False, height=False)
         self.__matrixFrame()
         self.__robotFrame()
         self.__valuesFrame()
@@ -34,8 +45,8 @@ class App(Tk):
     def __matrixFrame(self):
         baseText =  "Matriz de transformación "
 
-        frameColor = '#14213D'
-        fontColor = 'white'
+        frameColor = self.__bottomFrameColor
+        fontColor = self.__bottomFontColor
         frameMatrix = Frame(self, bg = frameColor)
         frameMatrix.place(x=0,rely=0.5,width=self.width, height=self.height/2)
 
@@ -205,7 +216,7 @@ class App(Tk):
             frameMatrix.rowconfigure(i, weight=1)
 
     def __robotFrame(self):
-        frameColor = '#000000'
+        frameColor = self.__imageFrameColor
         paddingImg = 10
         #Frame
         frameRobot = Frame(self, bg = frameColor)
@@ -216,47 +227,46 @@ class App(Tk):
         Label(frameRobot, image = self._img, bg=frameColor).grid(row=0,column=0, padx= paddingImg, pady= paddingImg)
 
     def __valuesFrame(self):
-        frameColor = '#FCA311'
 
         #Frame Padre
-        frameValues = Frame(self, bg = frameColor)
+        frameValues = Frame(self, bg = self.__frameColor)
         ratioAspectX = 0.7
         frameWidth = self.width*ratioAspectX
         frameHeight = self.height/2
         frameValues.place(relx=1-ratioAspectX,y=0,width=frameWidth, height=frameHeight)
         #Frame de Sliders
-        frameSliders = Frame(frameValues, bg = frameColor)
+        frameSliders = Frame(frameValues, bg = self.__frameColor)
         frameSliders.place(x=0, y=0,  width=frameWidth/2, height=frameHeight)
         #Frame Inversa
-        frameInverse= Frame(frameValues, bg = 'green')
+        frameInverse= Frame(frameValues, bg = self.__frameInverserColor)
         frameInverse.place(relx=0.5, y=0,  width=frameWidth/2, height=frameHeight)
 
         #Style tkk Sliders
-        ttk.Style().configure("TScale", background=frameColor)
+        ttk.Style().configure("TScale", background=self.__frameColor)
 
         #Primer Slider
-        labelSlider1 = Label(frameSliders, text=self._art1Name, bg = frameColor)
+        labelSlider1 = Label(frameSliders, text=self._art1Name, bg = self.__titleColor, fg = self.__fontColor)
         self.firstSlider = ttk.Scale(frameSliders, from_=0, to=200, orient=HORIZONTAL, style="TScale")
         
-        labelValue1 = Label(frameSliders, text="Valor Actual", bg = frameColor)
-        valueBox1 = Entry(frameSliders, width = 20, bg = '#CE2321')
-        buttonValue1 = Button(frameSliders, text='Posicionar') 
+        labelValue1 = Label(frameSliders, text="Valor Actual", bg = self.__frameColor, fg = self.__fontColor)
+        valueBox1 = Entry(frameSliders, width = 20, bg = self.__boxColor)
+        buttonValue1 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton) 
 
         #Segundo Slider
-        labelSlider2 = Label(frameSliders, text=self._art2Name, bg = frameColor)
+        labelSlider2 = Label(frameSliders, text=self._art2Name, bg = self.__titleColor, fg = self.__fontColor)
         self.secondSlider = ttk.Scale(frameSliders, from_=0, to=200, orient=HORIZONTAL)
 
-        labelValue2 = Label(frameSliders, text="Valor Actual", bg = frameColor)
-        valueBox2 = Entry(frameSliders, width = 20, bg = '#CE2321')
-        buttonValue2 = Button(frameSliders, text='Posicionar') 
+        labelValue2 = Label(frameSliders, text="Valor Actual", bg = self.__frameColor, fg = self.__fontColor)
+        valueBox2 = Entry(frameSliders, width = 20, bg = self.__boxColor)
+        buttonValue2 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton) 
 
         #Tercer Slider
-        labelSlider3 = Label(frameSliders, text=self._art3Name, bg = frameColor)
+        labelSlider3 = Label(frameSliders, text=self._art3Name, bg = self.__titleColor, fg = self.__fontColor)
         self.thirdSlider = ttk.Scale(frameSliders, from_=0, to=200, orient=HORIZONTAL)
         
-        labelValue3 = Label(frameSliders, text="Valor Actual", bg = frameColor)
-        valueBox3 = Entry(frameSliders, width = 20, bg = '#CE2321')
-        buttonValue3 = Button(frameSliders, text='Posicionar') 
+        labelValue3 = Label(frameSliders, text="Valor Actual", bg = self.__frameColor, fg = self.__fontColor)
+        valueBox3 = Entry(frameSliders, width = 20, bg = self.__boxColor)
+        buttonValue3 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton) 
         
         #Configurar Grilla Sliders
         labelSlider1.grid(row = 0, column= 0, columnspan=3, sticky="ew")
@@ -286,14 +296,14 @@ class App(Tk):
         frameSliders.columnconfigure(2, weight=1)
 
         #Px Py Pz
-        labelPx = Label(frameInverse, text="Px", bg = frameColor)
-        self.Px = Entry(frameInverse, width = 20, bg = '#CE2321')
-        labelPy = Label(frameInverse, text="Py", bg = frameColor)
-        self.Py = Entry(frameInverse, width = 20, bg = '#CE2321')
-        labelPz = Label(frameInverse, text="Pz", bg = frameColor)
-        self.Pz = Entry(frameInverse, width = 20, bg = '#CE2321')
+        labelPx = Label(frameInverse, text="Px", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        self.Px = Entry(frameInverse, width = 20, bg = self.__boxColor)
+        labelPy = Label(frameInverse, text="Py", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        self.Py = Entry(frameInverse, width = 20, bg = self.__boxColor)
+        labelPz = Label(frameInverse, text="Pz", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        self.Pz = Entry(frameInverse, width = 20, bg = self.__boxColor)
         #Boton Inversa
-        buttonInverse = Button(frameInverse, text='Calcular') 
+        buttonInverse = Button(frameInverse, text='Calcular', bg=self.__buttonColor, fg = self.__fontColorButton) 
         
         #Configurar Grilla Puntos
         labelPx.grid(row=0,column=0, sticky="nsew")
@@ -302,7 +312,43 @@ class App(Tk):
         self.Px.grid(row=0,column=1)
         self.Py.grid(row=1,column=1)
         self.Pz.grid(row=2,column=1)
-        buttonInverse.grid(row=0,column=2, rowspan=3, sticky="nsew")
-        frameInverse.columnconfigure(0, weight=1)
-        frameInverse.columnconfigure(1, weight=1)
-        frameInverse.columnconfigure(2, weight=1)
+        buttonInverse.grid(row=0,column=2, rowspan=3, columnspan=2, sticky="nsew")
+        for i in range(4):
+            frameInverse.columnconfigure(i, weight=1)
+
+        #Codo Arriba
+        labelCodoArriba = Label(frameInverse, text="Codo Arriba", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta1CodoArriba = Label(frameInverse, text="theta1", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta2CodoArriba = Label(frameInverse, text="theta2", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta3CodoArriba = Label(frameInverse, text="theta3", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta1CodoArribaResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta2CodoArribaResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta3CodoArribaResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+
+        #Codo Abajo
+        labelCodoAbajo = Label(frameInverse, text="Codo Aabajo", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta1CodoAbajo = Label(frameInverse, text="theta1", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta2CodoAbajo = Label(frameInverse, text="theta2", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta3CodoAbajo = Label(frameInverse, text="theta3", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta1CodoAbajoResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta2CodoAbajoResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta3CodoAbajoResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+
+        #Grilla Resultados Inversa
+        labelCodoArriba.grid(row=3, column=0, columnspan=2)
+        theta1CodoArriba.grid(row=4, column=0)
+        theta2CodoArriba.grid(row=5, column=0)
+        theta3CodoArriba.grid(row=6, column=0)
+        theta1CodoArribaResultado.grid(row=4, column=1)
+        theta2CodoArribaResultado.grid(row=5, column=1)
+        theta3CodoArribaResultado.grid(row=6, column=1)
+        labelCodoAbajo.grid(row=3, column=2, columnspan=2)
+        theta1CodoAbajo.grid(row=4, column=2)
+        theta2CodoAbajo.grid(row=5, column=2)
+        theta3CodoAbajo.grid(row=6, column=2)
+        theta1CodoAbajoResultado.grid(row=4, column=3)
+        theta2CodoAbajoResultado.grid(row=5, column=3)
+        theta3CodoAbajoResultado.grid(row=6, column=3)
+
+        for i in range(7):
+            frameInverse.rowconfigure(i, weight=1)

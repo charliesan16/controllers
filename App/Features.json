@@ -8,7 +8,18 @@
             "imagePath":"../App/Antropomorf.png",
             "tituloArticulacion1":"Titulo1",
             "tituloArticulacion2":"Titulo2",
-            "tituloArticulacion3":"Titulo3"
+            "tituloArticulacion3":"Titulo3",
+            "titleColor":"#161925",
+            "frameColor":"#23395B",
+            "frameInverserColor":"#23395B",
+            "boxColor":"#CBF7ED",
+            "buttonColor":"#8EA8C3",
+            "fontColor":"white",
+            "fontColorInverse":"white",
+            "fontColorButton":"black",
+            "bottomFrameColor":"#161925",
+            "bottomFontColor":"white",
+            "imageFrameColor":"black"
         }
     ],
     "SCARA":
@@ -20,7 +31,18 @@
             "imagePath":"../App/SCARA.png",
             "tituloArticulacion1":"Titulo1",
             "tituloArticulacion2":"Titulo2",
-            "tituloArticulacion3":"Titulo3"
+            "tituloArticulacion3":"Titulo3",
+            "titleColor":"#161925",
+            "frameColor":"#23395B",
+            "frameInverserColor":"#23395B",
+            "boxColor":"#CBF7ED",
+            "buttonColor":"#8EA8C3",
+            "fontColor":"white",
+            "fontColorInverse":"white",
+            "fontColorButton":"black",
+            "bottomFrameColor":"#161925",
+            "bottomFontColor":"white",
+            "imageFrameColor":"black"
         }
     ]
 }
