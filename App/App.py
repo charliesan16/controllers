@@ -1,7 +1,6 @@
 from tkinter import *
 import tkinter.ttk as ttk
 from PIL import ImageTk, Image
-from Funcitons import *
 
 
 class App(Tk):
@@ -26,9 +25,9 @@ class App(Tk):
         self.__minTS = features['sliderValues'][0]['min3']
         self.__maxTS = features['sliderValues'][0]['max3']
             #Set points de boxes
-        self.__valueBox1Variable = DoubleVar(value=(self.__maxFS+self.__minFS)/2)
-        self.__valueBox2Variable = DoubleVar(value=(self.__maxSS+self.__minSS)/2)
-        self.__valueBox3Variable = DoubleVar(value=(self.__maxTS+self.__minTS)/2)
+        self.__valueBox1Variable = StringVar(value=(self.__maxFS+self.__minFS)/2)
+        self.__valueBox2Variable = StringVar(value=(self.__maxSS+self.__minSS)/2)
+        self.__valueBox3Variable = StringVar(value=(self.__maxTS+self.__minTS)/2)
             #Puntos
         self.Px = 0
         self.Py = 0
@@ -269,27 +268,27 @@ class App(Tk):
 
         #Primer Slider
         labelSlider1 = Label(frameSliders, text=self._art1Name, bg = self.__titleColor, fg = self.__fontColor)
-        self.firstSlider = ttk.Scale(frameSliders, from_=self.__minFS, to=self.__maxFS, orient=HORIZONTAL, style="TScale", command = self.sliderOne)
+        self.firstSlider = ttk.Scale(frameSliders, from_=self.__minFS, to=self.__maxFS, orient=HORIZONTAL, command = self.sliderOne)
         
         labelValue1 = Label(frameSliders, text="Valor Actual", bg = self.__frameColor, fg = self.__fontColor)
         self.valueBox1 = Entry(frameSliders, textvariable=self.__valueBox1Variable, width = 20, bg = self.__boxColor)
-        buttonValue1 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton) 
+        buttonValue1 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton, command= self.buttonCmmd1) 
 
         #Segundo Slider
         labelSlider2 = Label(frameSliders, text=self._art2Name, bg = self.__titleColor, fg = self.__fontColor)
-        self.secondSlider = ttk.Scale(frameSliders, from_=self.__minSS, to=self.__maxSS, orient=HORIZONTAL)
+        self.secondSlider = ttk.Scale(frameSliders, from_=self.__minSS, to=self.__maxSS, orient=HORIZONTAL, command = self.sliderTwo)
 
         labelValue2 = Label(frameSliders, text="Valor Actual", bg = self.__frameColor, fg = self.__fontColor)
         self.valueBox2 = Entry(frameSliders, textvariable=self.__valueBox2Variable,width = 20, bg = self.__boxColor)
-        buttonValue2 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton) 
+        buttonValue2 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton, command= self.buttonCmmd2) 
 
         #Tercer Slider
         labelSlider3 = Label(frameSliders, text=self._art3Name, bg = self.__titleColor, fg = self.__fontColor)
-        self.thirdSlider = ttk.Scale(frameSliders, from_=self.__minTS, to=self.__maxFS, orient=HORIZONTAL)
+        self.thirdSlider = ttk.Scale(frameSliders, from_=self.__minTS, to=self.__maxFS, orient=HORIZONTAL, command = self.sliderThree)
         
         labelValue3 = Label(frameSliders, text="Valor Actual", bg = self.__frameColor, fg = self.__fontColor)
         self.valueBox3 = Entry(frameSliders, textvariable=self.__valueBox3Variable, width = 20, bg = self.__boxColor)
-        buttonValue3 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton) 
+        buttonValue3 = Button(frameSliders, text='Posicionar', bg=self.__buttonColor, fg = self.__fontColorButton, command= self.buttonCmmd3) 
         
         #Configurar Grilla Sliders
         labelSlider1.grid(row = 0, column= 0, columnspan=3, sticky="ew")
@@ -383,5 +382,19 @@ class App(Tk):
     ##############################################################################################
 
     def sliderOne(self, value):
-        print(value)
-        self.__valueBox1Variable.set(str(value))
+        self.__valueBox1Variable.set(value)
+    
+    def sliderTwo(self, value):
+        self.__valueBox2Variable.set(value)
+
+    def sliderThree(self, value):
+        self.__valueBox3Variable.set(value)
+
+    def buttonCmmd1(self):
+        self.firstSlider.set(float(self.__valueBox1Variable.get()))
+
+    def buttonCmmd2(self):
+        self.secondSlider.set(float(self.__valueBox2Variable.get()))
+    
+    def buttonCmmd3(self):
+        self.thirdSlider.set(float(self.__valueBox3Variable.get()))
