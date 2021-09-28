@@ -4,9 +4,11 @@ sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 import threading
 from App import App
 import json
-from controller import Robot
+
+#from controller import Robot
 
 # create the Robot instance.
+'''
 robot = Robot()
 timestep = 64
 
@@ -24,3 +26,4 @@ hilo_main2.start()
 
 # Enter here exit cleanup code.
 window2.mainloop()
+'''

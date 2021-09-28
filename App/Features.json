@@ -9,6 +9,16 @@
             "tituloArticulacion1":"Titulo1",
             "tituloArticulacion2":"Titulo2",
             "tituloArticulacion3":"Titulo3",
+            "sliderValues":[
+                {
+                    "min1":0,
+                    "min2":0,
+                    "min3":0,
+                    "max1":200,
+                    "max2":200,
+                    "max3":200
+                }
+            ],
             "titleColor":"#161925",
             "frameColor":"#23395B",
             "frameInverserColor":"#23395B",
@@ -32,6 +42,16 @@
             "tituloArticulacion1":"Titulo1",
             "tituloArticulacion2":"Titulo2",
             "tituloArticulacion3":"Titulo3",
+            "sliderValues":[
+                {
+                    "min1":0,
+                    "min2":0,
+                    "min3":0,
+                    "max1":200,
+                    "max2":200,
+                    "max3":200
+                }
+            ],
             "titleColor":"#161925",
             "frameColor":"#23395B",
             "frameInverserColor":"#23395B",

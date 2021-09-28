@@ -1,7 +1,6 @@
 """AntropomorphController controller."""
 import sys, os
 sys.path.append(os.path.abspath(os.path.join('..', 'App')))
-#sys.path.append('Users\lfpin\Downloads\Lab1\Lab1\my_project\controllers\App')
 from App import App
 import json
 from controller import Robot
