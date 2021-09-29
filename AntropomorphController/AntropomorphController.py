@@ -3,7 +3,6 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import App
 import json
-from controller import Robot
 import threading
 
 from controller import Robot

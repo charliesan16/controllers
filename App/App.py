@@ -59,6 +59,13 @@ class App(Tk):
         self.__valuePx.set(0)
         self.__valuePy.set(0)
         self.__valuePz.set(0)
+            #Thetas cinematica inversa
+        self.__theta1Inv = 0
+        self.__theta2Inv = 0
+        self.__theta3Inv = 0
+        self._theta1InvDown = 0
+        self.__theta2InvDown = 0
+        self.__theta3InvDown = 0
             #Nombres Articulaciones
         self._art1Name = features['tituloArticulacion1']
         self._art2Name = features['tituloArticulacion2']
@@ -371,18 +378,18 @@ class App(Tk):
         theta1CodoArriba = Label(frameInverse, text="theta1", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
         theta2CodoArriba = Label(frameInverse, text="theta2", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
         theta3CodoArriba = Label(frameInverse, text="theta3", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta1CodoArribaResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta2CodoArribaResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta3CodoArribaResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta1CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta1Inv), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta2CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta2Inv), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta3CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta3Inv), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
 
         #Codo Abajo
         labelCodoAbajo = Label(frameInverse, text="Codo Aabajo", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
         theta1CodoAbajo = Label(frameInverse, text="theta1", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
         theta2CodoAbajo = Label(frameInverse, text="theta2", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
         theta3CodoAbajo = Label(frameInverse, text="theta3", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta1CodoAbajoResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta2CodoAbajoResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta3CodoAbajoResultado = Label(frameInverse, text="0", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta1CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self._theta1InvDown), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta2CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta2InvDown), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        theta3CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta3InvDown), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
 
         #Grilla Resultados Inversa
         labelCodoArriba.grid(row=3, column=0, columnspan=2)
@@ -409,7 +416,7 @@ class App(Tk):
         menuCascada = Menu(newMenu, tearoff="off")
         newMenu.add_cascade(label="Calculos", menu=menuCascada)
         menuCascada.add_command(label="Directa", command= self.matrixTransformation)
-        menuCascada.add_command(label="Inversa")
+        menuCascada.add_command(label="Inversa", command= self.inverseKinematics)
         menuCascada.add_command(label="Velocidad")
 
     ##############################################################################################
@@ -460,3 +467,9 @@ class App(Tk):
             self.__d3 = float(self.firstSlider.get())/1000
         self.theta1 = np.radians(float(self.firstSlider.get()))
         self.theta2 = np.radians(float(self.secondSlider.get()))
+
+    def inverseKinematics(self):
+        P = np.array([self.__valuePx.get(),self.__valuePy.get(),self.__valuePz.get()]).astype(float)
+        L = [self.__l1, self.__l2, self.__l3]
+        self.__theta1Inv, self._theta1InvDown, self.__theta2Inv, self.__theta2InvDown, self.__theta3Inv, self.__theta3InvDown = Functions.inverseKinematics(self.name, P, L)
+        self.__valuesFrame()
