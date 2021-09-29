@@ -29,12 +29,12 @@ def inverseKinematics(name, P, L):
         theta3= L[2]-P[2]
         d = (P[0]**2+P[1]**2)**(1/2)
         costheta2 = (d**2-L[0]**2-L[1]**2)/(2*L[0]*L[1])
-        theta2 = np.arccos(costheta2)
+        theta2 = np.degrees(np.arccos(costheta2))
 
         alpha = np.arctan2(P[1],P[0])
         beta = np.abs(np.arccos((L[1]**2 - d**2 - L[0]**2)/(-2*L[0]*d)))
-        theta1up = alpha + beta
-        theta1down =  alpha - beta
+        theta1up = np.degrees(alpha + beta)
+        theta1down =  np.degrees(alpha - beta)
 
         return theta1up, theta1down, -theta2, theta2, theta3, theta3 
     

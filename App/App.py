@@ -464,7 +464,7 @@ class App(Tk):
         if (self.name == 'Antropomorfico'):
             self.theta3 = np.radians(float(self.thirdSlider.get()))
         else:
-            self.__d3 = float(self.firstSlider.get())/1000
+            self.d3 = float(self.thirdSlider.get())/1000
         self.theta1 = np.radians(float(self.firstSlider.get()))
         self.theta2 = np.radians(float(self.secondSlider.get()))
 
@@ -473,3 +473,6 @@ class App(Tk):
         L = [self.__l1, self.__l2, self.__l3]
         self.__theta1Inv, self._theta1InvDown, self.__theta2Inv, self.__theta2InvDown, self.__theta3Inv, self.__theta3InvDown = Functions.inverseKinematics(self.name, P, L)
         self.__valuesFrame()
+        self.firstSlider.set(self.__theta1Inv)
+        self.secondSlider.set(self.__theta2Inv)
+        self.thirdSlider.set(self.__theta3Inv)
