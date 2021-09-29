@@ -12,9 +12,9 @@ from controller import Robot
 robot = Robot()
 timestep = 64
 
-motorAntropo1 = robot.getDevice("BaseAntrop")
-motorScara2 = robot.getDevice("artic1Antropo")
-motorScara3 = robot.getDevice("artic2Antropo")
+base = robot.getDevice("BaseAntrop")
+artUno = robot.getDevice("artic1Antropo")
+artDos = robot.getDevice("artic2Antropo")
 
 #Features JSON
 with open('..\App\Features.json') as json_file:
@@ -22,17 +22,14 @@ with open('..\App\Features.json') as json_file:
 
 window = App(data['Antropomorfico'][0])
 
-
 def runMethod():
     while robot.step(timestep) != -1:
-       pass
+        base.setPosition(window.exportSlider1(1))
+        artUno.setPosition(window.exportSlider1(2))
+        artDos.setPosition(window.exportSlider1(3))
         
 hilo_main = threading.Thread(target=runMethod, daemon=True)
 hilo_main.start()
 
 
 window.mainloop()
-
-
-
-

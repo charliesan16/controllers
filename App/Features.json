@@ -6,17 +6,40 @@
             "height":"768",
             "robotName":"Antropomorfico",
             "imagePath":"../App/Antropomorf.png",
-            "tituloArticulacion1":"Titulo1",
-            "tituloArticulacion2":"Titulo2",
-            "tituloArticulacion3":"Titulo3",
+            "tituloArticulacion1":"Art. Base",
+            "tituloArticulacion2":"Art. 2",
+            "tituloArticulacion3":"Art. 3",
             "sliderValues":[
                 {
-                    "min1":0,
+                    "min1":-180,
                     "min2":0,
-                    "min3":0,
-                    "max1":200,
-                    "max2":200,
-                    "max3":200
+                    "min3":-120,
+                    "max1":180,
+                    "max2":150,
+                    "max3":90
+                }
+            ],
+            "dHValues":[
+                {
+                    "theta1": 0,
+                    "theta2": 0,
+                    "theta3": 0,
+                    "d1": 0.1555,
+                    "d2": 0,
+                    "d3": 0,
+                    "a1": 0,
+                    "a2": 0.13617,
+                    "a3": 0.35149,
+                    "alpha1": -1.5708,
+                    "alpha2": 0,
+                    "alpha3": 0
+                }
+            ],
+            "inverseValues":[
+                {
+                    "l1": 0.155,
+                    "l2": 0.13617,
+                    "l3": 0.35149
                 }
             ],
             "titleColor":"#161925",
@@ -44,12 +67,35 @@
             "tituloArticulacion3":"Titulo3",
             "sliderValues":[
                 {
-                    "min1":0,
-                    "min2":0,
+                    "min1":-180,
+                    "min2":-140,
                     "min3":0,
-                    "max1":200,
-                    "max2":200,
-                    "max3":200
+                    "max1":180,
+                    "max2":140,
+                    "max3":250
+                }
+            ],
+            "dHValues":[
+                {
+                    "theta1": 0,
+                    "theta2": 0,
+                    "theta3": 1.5708,
+                    "d1": 0.3185,
+                    "d2": 0,
+                    "d3": 0,
+                    "a1": 0.1475,
+                    "a2": 0.195,
+                    "a3": 0,
+                    "alpha1": 0,
+                    "alpha2": 3.14159,
+                    "alpha3": 0
+                }
+            ],
+            "inverseValues":[
+                {
+                    "l1": 0.1475,
+                    "l2": 0.195,
+                    "l3": 0.3185
                 }
             ],
             "titleColor":"#161925",
