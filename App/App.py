@@ -3,7 +3,10 @@ import tkinter.ttk as ttk
 from PIL import ImageTk, Image
 import numpy as np
 import Functions 
-
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('..', 'VelocidadGUI')))
+from VelocidadGUI import VelocidadGUI
+import json
 
 class App(Tk):
     def __init__(self, features):
@@ -66,6 +69,7 @@ class App(Tk):
         self._theta1InvDown = 0
         self.__theta2InvDown = 0
         self.__theta3InvDown = 0
+        self.__flag = "arriba"
             #Nombres Articulaciones
         self._art1Name = features['tituloArticulacion1']
         self._art2Name = features['tituloArticulacion2']
@@ -82,6 +86,8 @@ class App(Tk):
         self.__bottomFrameColor = features['bottomFrameColor']
         self.__bottomFontColor = features['bottomFontColor']
         self.__imageFrameColor = features['imageFrameColor']
+        self.__elbowUpColor = '#23395B'
+        self.__elbowDownColor = '#23395B'
         #Creación Vista
         self.__frameset()
             #Set points de sliders
@@ -360,7 +366,7 @@ class App(Tk):
         labelPz = Label(frameInverse, text="Pz", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
         Pz = Entry(frameInverse, width = 20, bg = self.__boxColor, textvariable = self.__valuePz)
         #Boton Inversa
-        buttonInverse = Button(frameInverse, text='Calcular', bg=self.__buttonColor, fg = self.__fontColorButton) 
+        buttonInverse = Button(frameInverse, text='Cinematica Diferencial', bg=self.__buttonColor, fg = self.__fontColorButton, command= self.buttonDiferential) 
         
         #Configurar Grilla Puntos
         labelPx.grid(row=0,column=0, sticky="nsew")
@@ -374,22 +380,22 @@ class App(Tk):
             frameInverse.columnconfigure(i, weight=1)
 
         #Codo Arriba
-        labelCodoArriba = Label(frameInverse, text="Codo Arriba", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta1CodoArriba = Label(frameInverse, text="theta1", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta2CodoArriba = Label(frameInverse, text="theta2", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta3CodoArriba = Label(frameInverse, text="theta3", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta1CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta1Inv), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta2CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta2Inv), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta3CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta3Inv), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        labelCodoArriba = Label(frameInverse, text="Codo Arriba", bg = self.__elbowUpColor, fg = self.__fontColorInverse)
+        theta1CodoArriba = Label(frameInverse, text="theta1", bg = self.__elbowUpColor, fg = self.__fontColorInverse)
+        theta2CodoArriba = Label(frameInverse, text="theta2", bg = self.__elbowUpColor, fg = self.__fontColorInverse)
+        theta3CodoArriba = Label(frameInverse, text="theta3", bg = self.__elbowUpColor, fg = self.__fontColorInverse)
+        theta1CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta1Inv), bg = self.__elbowUpColor, fg = self.__fontColorInverse)
+        theta2CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta2Inv), bg = self.__elbowUpColor, fg = self.__fontColorInverse)
+        theta3CodoArribaResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta3Inv), bg = self.__elbowUpColor, fg = self.__fontColorInverse)
 
         #Codo Abajo
-        labelCodoAbajo = Label(frameInverse, text="Codo Aabajo", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta1CodoAbajo = Label(frameInverse, text="theta1", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta2CodoAbajo = Label(frameInverse, text="theta2", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta3CodoAbajo = Label(frameInverse, text="theta3", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta1CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self._theta1InvDown), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta2CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta2InvDown), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
-        theta3CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta3InvDown), bg = self.__frameInverserColor, fg = self.__fontColorInverse)
+        labelCodoAbajo = Label(frameInverse, text="Codo Aabajo", bg = self.__elbowDownColor, fg = self.__fontColorInverse)
+        theta1CodoAbajo = Label(frameInverse, text="theta1", bg = self.__elbowDownColor, fg = self.__fontColorInverse)
+        theta2CodoAbajo = Label(frameInverse, text="theta2", bg = self.__elbowDownColor, fg = self.__fontColorInverse)
+        theta3CodoAbajo = Label(frameInverse, text="theta3", bg = self.__elbowDownColor, fg = self.__fontColorInverse)
+        theta1CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self._theta1InvDown), bg = self.__elbowDownColor, fg = self.__fontColorInverse)
+        theta2CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta2InvDown), bg = self.__elbowDownColor, fg = self.__fontColorInverse)
+        theta3CodoAbajoResultado = Label(frameInverse, text='{:.3f}'.format(self.__theta3InvDown), bg = self.__elbowDownColor, fg = self.__fontColorInverse)
 
         #Grilla Resultados Inversa
         labelCodoArriba.grid(row=3, column=0, columnspan=2)
@@ -417,7 +423,10 @@ class App(Tk):
         newMenu.add_cascade(label="Calculos", menu=menuCascada)
         menuCascada.add_command(label="Directa", command= self.matrixTransformation)
         menuCascada.add_command(label="Inversa", command= self.inverseKinematics)
-        menuCascada.add_command(label="Velocidad")
+        menuCascada2 = Menu(newMenu, tearoff="off")
+        newMenu.add_cascade(label="Codo", menu=menuCascada2)
+        menuCascada2.add_command(label="Codo Arriba", command= self.elbowUp)
+        menuCascada2.add_command(label="Codo Abajo", command= self.elbowDown)
 
     ##############################################################################################
     ##############################################################################################
@@ -473,6 +482,39 @@ class App(Tk):
         L = [self.__l1, self.__l2, self.__l3]
         self.__theta1Inv, self._theta1InvDown, self.__theta2Inv, self.__theta2InvDown, self.__theta3Inv, self.__theta3InvDown = Functions.inverseKinematics(self.name, P, L)
         self.__valuesFrame()
-        self.firstSlider.set(self.__theta1Inv)
-        self.secondSlider.set(self.__theta2Inv)
-        self.thirdSlider.set(self.__theta3Inv)
+        if self.__flag == "arriba":
+            self.firstSlider.set(self.__theta1Inv)
+            self.secondSlider.set(self.__theta2Inv)
+            self.thirdSlider.set(self.__theta3Inv)
+        elif self.__flag == "abajo":
+            self.firstSlider.set(self.__theta1InvDown)
+            self.secondSlider.set(self.__theta2InvDown)
+            self.thirdSlider.set(self.__theta3InvDown)
+        
+    
+    def elbowUp(self):
+        self.__elbowDownColor = '#23395B'
+        self.__elbowUpColor = 'green'
+        self.__flag = "arriba"
+        self.__valuesFrame()
+
+    def elbowDown(self):
+        self.__elbowUpColor = '#23395B'
+        self.__elbowDownColor = 'green'
+        self.__flag = "abajo"
+        self.__valuesFrame()
+
+    def buttonDiferential(self):
+        data = {}
+        data['values'] = {
+            'a1': 0.1475,
+            'a2': 0.195,
+            'theta1': np.radians(50),
+            'theta2': np.radians(-70),
+            'pep': 2,
+            'd3': 0.1   
+        }
+        with open('mydata.json', 'w') as output:
+            json.dump(data, output)
+        window = VelocidadGUI()
+        window.mainloop()
