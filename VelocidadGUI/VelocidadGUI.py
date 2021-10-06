@@ -8,6 +8,9 @@ from matplotlib.backends.backend_tkagg import (
 from matplotlib.figure import Figure
 import Funciones
 import json
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('..', 'App')))
+from App import Functions
 
 class VelocidadGUI(Tk):
     def __init__(self):
@@ -155,7 +158,7 @@ class VelocidadGUI(Tk):
 
 
     def buttonCalcular(self):
-        with open('..\AntropomorphController\mydata.json') as json_file:
+        with open('..\ScaraController\mydata.json') as json_file:
             data = json.load(json_file)
         a1 = data['values']['a1']
         a2 = data['values']['a2']
@@ -163,7 +166,7 @@ class VelocidadGUI(Tk):
         theta2 = data['values']['theta2']
         #n = float(self.__valueBoxN.get())
         n = 30
-        pep = data['values']['pep']
+        pep = 2
         #xi = float(self.__valueBoxXi.get())
         #xf = float(self.__valueBoxXf.get())
         #yi = float(self.__valueBoxYi.get())
@@ -190,13 +193,25 @@ class VelocidadGUI(Tk):
         canvas.draw()
         canvas.get_tk_widget().pack(expand=True)
 
+        xPos, yPos, zPos = np.zeros((1,n)), np.zeros((1,n)), np.zeros((1,n))
+        #Calcular cinematica directa
+        for i in range(n):
+            # theta, alpha, ai, di
+            a1Matrix = Functions.matrixT(q[0,i], 0, 0.1475, 0.3185)
+            a2Matrix = Functions.matrixT(q[1,i], 3.14159, 0.195, 0)
+            a3Matrix = Functions.matrixT(1.5708, 0, 0, q[2,i]/1000)
+            tMatrix = Functions.totalMatrix(a1Matrix, a2Matrix, a3Matrix)
+            xPos[0,i], yPos[0,i], zPos[0,i] = tMatrix[0,3], tMatrix[1,3], tMatrix[2,3]
+            
+        #print(xPos, yPos, zPos)
+
         #The figure that will contain the plot
         fig2 = Figure(figsize =(10,10),dpi=100)
         #Plot
         plot3DPlot = fig2.add_subplot(111, projection = '3d')
-        zline = np.linspace(0, 15, 1000)
-        xline = np.sin(zline)
-        yline = np.cos(zline)
+        zline = zPos[0,:]
+        xline = xPos[0,:]
+        yline = yPos[0,:]
         plot3DPlot.plot3D(xline, yline, zline, 'gray')
 
         canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
