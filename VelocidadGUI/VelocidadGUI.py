@@ -12,9 +12,9 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import Functions
 
-class VelocidadGUI(Tk):
-    def __init__(self):
-        Tk.__init__(self)
+class VelocidadGUI(Toplevel):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.width = 1366
         self.height = 768
         self.__framePlots = None
@@ -30,14 +30,17 @@ class VelocidadGUI(Tk):
         self.__valueBoxXff = StringVar(0)
         self.__valueBoxYff = StringVar(0)
         self.__valueBoxZff = StringVar(0)
+        self.__valueBoxXi.set(45)
         self.__diferentialColor = '#23395B'
         self.__plotsColor = 'white'
         self.__frameDiferentialKinematics = None
         self.__frameset()
+        
 
     def __frameset(self):
         self.geometry('1366x768')
         self.title('Cinematica Diferencial')
+        self.resizable(width=False, height=False)
         self.__diferentialKinematicsFrame()
         self.__plotsFrame()
 
@@ -52,9 +55,9 @@ class VelocidadGUI(Tk):
     def __dataFrame(self):
         frameColor = '#23395B'
         foregroundLetter = 'white'
-        boxColor = '#5C7AEA'
+        boxColor = '#CBF7ED'
         fontSize =("Arial", 25)
-        dataFrame = Frame(self.__frameDiferentialKinematics, bg = frameColor, highlightbackground="black")
+        dataFrame = Frame(self.__frameDiferentialKinematics, bg = frameColor)
         dataFrame.place(x=0,y=0, width = self.width*0.3*0.5, height = self.height*0.7)
         
         #Entradas
@@ -173,10 +176,13 @@ class VelocidadGUI(Tk):
         #yf = float(self.__valueBoxYf.get())
         #zi = float(self.__valueBoxZf.get())
         #zf = float(self.__valueBoxZf.get())
+        xi, xf = 0.278051,0.31
+        yi, yf = 0.046298,0.1
+        zi, zf = 0.2185,0.3
         d3 = data['values']['d3']
         #2, 0.278051, 0.31, 0.046298, 0.1, 0.2185, 0.3, 0.1
         q = Funciones.SCARAVel(a1, a2, theta1, theta2,
-         n, pep, 0.278051, 0.31, 0.046298, 0.1, 0.2185, 0.3, d3)
+         n, pep, xi, xf, yi, yf, zi, zf, d3)
         #The figure that will contain the plot
         fig = Figure(figsize =(10,10),dpi=100)
         #Plot
@@ -217,3 +223,4 @@ class VelocidadGUI(Tk):
         canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
         canvas3D.draw()
         canvas3D.get_tk_widget().pack(expand=True)
+        

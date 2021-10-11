@@ -489,7 +489,7 @@ class App(Tk):
             self.secondSlider.set(self.__theta2Inv)
             self.thirdSlider.set(self.__theta3Inv)
         elif self.__flag == "abajo":
-            self.firstSlider.set(self.__theta1InvDown)
+            self.firstSlider.set(self._theta1InvDown)
             self.secondSlider.set(self.__theta2InvDown)
             self.thirdSlider.set(self.__theta3InvDown)
         
@@ -522,5 +522,7 @@ class App(Tk):
         #'d3': 0.1
         with open('mydata.json', 'w') as output:
             json.dump(data, output)
-        window = VelocidadGUI()
-        window.mainloop()
+        window = VelocidadGUI(self)
+        window.grab_set()
+        #window = VelocidadGUI()
+        #window.mainloop()
