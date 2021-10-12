@@ -30,7 +30,17 @@ class VelocidadGUI(Toplevel):
         self.__valueBoxXff = StringVar(0)
         self.__valueBoxYff = StringVar(0)
         self.__valueBoxZff = StringVar(0)
-        self.__valueBoxXi.set(45)
+        self.__valueBoxXi.set(0)
+        self.__valueBoxXf.set(0)
+        self.__valueBoxYi.set(0)
+        self.__valueBoxYf.set(0)
+        self.__valueBoxZi.set(0)
+        self.__valueBoxZf.set(0)
+        self.__valueBoxV.set(0)
+        self.__valueBoxN.set(0)
+        self.__valueBoxXff.set(0)
+        self.__valueBoxYff.set(0)
+        self.__valueBoxZff.set(0)
         self.__diferentialColor = '#23395B'
         self.__plotsColor = 'white'
         self.__frameDiferentialKinematics = None
@@ -167,18 +177,19 @@ class VelocidadGUI(Toplevel):
         a2 = data['values']['a2']
         theta1 = data['values']['theta1']
         theta2 = data['values']['theta2']
-        #n = float(self.__valueBoxN.get())
-        n = 30
-        pep = 2
-        #xi = float(self.__valueBoxXi.get())
-        #xf = float(self.__valueBoxXf.get())
-        #yi = float(self.__valueBoxYi.get())
-        #yf = float(self.__valueBoxYf.get())
-        #zi = float(self.__valueBoxZf.get())
-        #zf = float(self.__valueBoxZf.get())
-        xi, xf = 0.278051,0.31
-        yi, yf = 0.046298,0.1
-        zi, zf = 0.2185,0.3
+        n = int(self.__valueBoxN.get())
+        #n = 30
+        #pep = 2
+        pep = float(self.__valueBoxV.get())
+        xi = float(self.__valueBoxXi.get())
+        xf = float(self.__valueBoxXf.get())
+        yi = float(self.__valueBoxYi.get())
+        yf = float(self.__valueBoxYf.get())
+        zi = float(self.__valueBoxZf.get())
+        zf = float(self.__valueBoxZf.get())
+        #xi, xf = 0.278051,0.31
+        #yi, yf = 0.046298,0.1
+        #zi, zf = 0.2185,0.3
         d3 = data['values']['d3']
         #2, 0.278051, 0.31, 0.046298, 0.1, 0.2185, 0.3, 0.1
         q = Funciones.SCARAVel(a1, a2, theta1, theta2,
