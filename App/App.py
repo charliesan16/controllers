@@ -492,8 +492,7 @@ class App(Tk):
             self.firstSlider.set(self._theta1InvDown)
             self.secondSlider.set(self.__theta2InvDown)
             self.thirdSlider.set(self.__theta3InvDown)
-        
-    
+
     def elbowUp(self):
         self.__elbowDownColor = '#23395B'
         self.__elbowUpColor = 'green'
@@ -508,21 +507,25 @@ class App(Tk):
 
     def buttonDiferential(self):
         data = {}
-        data['values'] = {
-            'a1': 0.1475,
-            'a2': 0.195,
-            'theta1': np.radians(50),
-            'theta2': np.radians(-70),
-            'd3': 0.1  
-        }
-        #'a1': 0.1475,
-        #'a2': 0.195,
-        #'theta1': np.radians(50),
-        #'theta2': np.radians(-70),
-        #'d3': 0.1
+        if (self.name == 'Antropomorfico'):
+            data['values'] = {
+                'a1': 0.1475,
+                'a2': 0.195,
+                'theta1': np.radians(50),
+                'theta2': np.radians(-70),
+                'd3': 0.1  
+            }
+            with open('mydata.json', 'w') as output:
+                json.dump(data, output)
+        else :
+            data['values'] = {
+                'a1': 0.1475,
+                'a2': 0.195,
+                'theta1': np.radians(50),
+                'theta2': np.radians(-70),
+                'd3': 0.1  
+            }
         with open('mydata.json', 'w') as output:
             json.dump(data, output)
-        window = VelocidadGUI(self)
+        window = VelocidadGUI(self, self.name)
         window.grab_set()
-        #window = VelocidadGUI()
-        #window.mainloop()

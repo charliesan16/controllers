@@ -13,10 +13,11 @@ sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import Functions
 
 class VelocidadGUI(Toplevel):
-    def __init__(self, parent):
+    def __init__(self, parent, name):
         super().__init__(parent)
         self.width = 1366
         self.height = 768
+        self.name = name
         self.__framePlots = None
         self.__frame3DPlot = None
         self.__valueBoxXi = StringVar(0)
@@ -171,15 +172,73 @@ class VelocidadGUI(Toplevel):
 
 
     def buttonCalcular(self):
-        with open('..\ScaraController\mydata.json') as json_file:
-            data = json.load(json_file)
-        a1 = data['values']['a1']
-        a2 = data['values']['a2']
-        theta1 = data['values']['theta1']
-        theta2 = data['values']['theta2']
+        self.tomarDatos()
+
+        if (self.name == 'Antropomorfico'):
+            pass
+        else:
+            with open('..\ScaraController\mydata.json') as json_file:
+                data = json.load(json_file)
+            a1 = data['values']['a1']
+            a2 = data['values']['a2']
+            theta1 = data['values']['theta1']
+            theta2 = data['values']['theta2']
+
+            n = int(self.__valueBoxN.get())
+            pep = float(self.__valueBoxV.get())
+            xi = float(self.__valueBoxXi.get())
+            xf = float(self.__valueBoxXf.get())
+            yi = float(self.__valueBoxYi.get())
+            yf = float(self.__valueBoxYf.get())
+            zi = float(self.__valueBoxZf.get())
+            zf = float(self.__valueBoxZf.get())
+
+            d3 = data['values']['d3']
+
+            q = Funciones.SCARAVel(a1, a2, theta1, theta2,
+            n, pep, xi, xf, yi, yf, zi, zf, d3)
+
+            #The figure that will contain the plot
+            fig = Figure(figsize =(10,10),dpi=100)
+            #Plot
+            plot1 = fig.add_subplot(131)
+            plot1.plot(np.arange(n), q[0:1,:].T, 'bo', np.arange(n), q[0:1,:].T, 'k') 
+
+            plot2 = fig.add_subplot(132)
+            plot2.plot(np.arange(n), q[1:2,:].T, 'bo', np.arange(n), q[1:2,:].T, 'k')
+
+            plot3 = fig.add_subplot(133)
+            plot3.plot(np.arange(n), q[2:,:].T, 'bo', np.arange(n), q[2:,:].T, 'k')
+
+            canvas = FigureCanvasTkAgg(fig,master = self.__framePlots)
+            canvas.draw()
+            canvas.get_tk_widget().pack(expand=True)
+
+            xPos, yPos, zPos = np.zeros((1,n)), np.zeros((1,n)), np.zeros((1,n))
+            #Calcular cinematica directa
+            for i in range(n):
+                # theta, alpha, ai, di
+                a1Matrix = Functions.matrixT(q[0,i], 0, 0.1475, 0.3185)
+                a2Matrix = Functions.matrixT(q[1,i], 3.14159, 0.195, 0)
+                a3Matrix = Functions.matrixT(1.5708, 0, 0, q[2,i]/1000)
+                tMatrix = Functions.totalMatrix(a1Matrix, a2Matrix, a3Matrix)
+                xPos[0,i], yPos[0,i], zPos[0,i] = tMatrix[0,3], tMatrix[1,3], tMatrix[2,3]
+
+            #The figure that will contain the plot
+            fig2 = Figure(figsize =(10,10),dpi=100)
+            #Plot
+            plot3DPlot = fig2.add_subplot(111, projection = '3d')
+            zline = zPos[0,:]
+            xline = xPos[0,:]
+            yline = yPos[0,:]
+            plot3DPlot.plot3D(xline, yline, zline, 'gray')
+
+            canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
+            canvas3D.draw()
+            canvas3D.get_tk_widget().pack(expand=True)
+    
+    def tomarDatos():
         n = int(self.__valueBoxN.get())
-        #n = 30
-        #pep = 2
         pep = float(self.__valueBoxV.get())
         xi = float(self.__valueBoxXi.get())
         xf = float(self.__valueBoxXf.get())
@@ -187,51 +246,3 @@ class VelocidadGUI(Toplevel):
         yf = float(self.__valueBoxYf.get())
         zi = float(self.__valueBoxZf.get())
         zf = float(self.__valueBoxZf.get())
-        #xi, xf = 0.278051,0.31
-        #yi, yf = 0.046298,0.1
-        #zi, zf = 0.2185,0.3
-        d3 = data['values']['d3']
-        #2, 0.278051, 0.31, 0.046298, 0.1, 0.2185, 0.3, 0.1
-        q = Funciones.SCARAVel(a1, a2, theta1, theta2,
-         n, pep, xi, xf, yi, yf, zi, zf, d3)
-        #The figure that will contain the plot
-        fig = Figure(figsize =(10,10),dpi=100)
-        #Plot
-        plot1 = fig.add_subplot(131)
-        plot1.plot(np.arange(n), q[0:1,:].T, 'bo', np.arange(n), q[0:1,:].T, 'k') 
-
-        plot2 = fig.add_subplot(132)
-        plot2.plot(np.arange(n), q[1:2,:].T, 'bo', np.arange(n), q[1:2,:].T, 'k')
-
-        plot3 = fig.add_subplot(133)
-        plot3.plot(np.arange(n), q[2:,:].T, 'bo', np.arange(n), q[2:,:].T, 'k')
-
-        canvas = FigureCanvasTkAgg(fig,master = self.__framePlots)
-        canvas.draw()
-        canvas.get_tk_widget().pack(expand=True)
-
-        xPos, yPos, zPos = np.zeros((1,n)), np.zeros((1,n)), np.zeros((1,n))
-        #Calcular cinematica directa
-        for i in range(n):
-            # theta, alpha, ai, di
-            a1Matrix = Functions.matrixT(q[0,i], 0, 0.1475, 0.3185)
-            a2Matrix = Functions.matrixT(q[1,i], 3.14159, 0.195, 0)
-            a3Matrix = Functions.matrixT(1.5708, 0, 0, q[2,i]/1000)
-            tMatrix = Functions.totalMatrix(a1Matrix, a2Matrix, a3Matrix)
-            xPos[0,i], yPos[0,i], zPos[0,i] = tMatrix[0,3], tMatrix[1,3], tMatrix[2,3]
-            
-        #print(xPos, yPos, zPos)
-
-        #The figure that will contain the plot
-        fig2 = Figure(figsize =(10,10),dpi=100)
-        #Plot
-        plot3DPlot = fig2.add_subplot(111, projection = '3d')
-        zline = zPos[0,:]
-        xline = xPos[0,:]
-        yline = yPos[0,:]
-        plot3DPlot.plot3D(xline, yline, zline, 'gray')
-
-        canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
-        canvas3D.draw()
-        canvas3D.get_tk_widget().pack(expand=True)
-        
