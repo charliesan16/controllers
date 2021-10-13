@@ -476,7 +476,7 @@ class App(Tk):
         if (self.name == 'Antropomorfico'):
             self.theta3 = np.radians(float(self.thirdSlider.get()))
         else:
-            self.d3 = float(self.thirdSlider.get())/1000
+            self.d3 = float(self.thirdSlider.get())/100
         self.theta1 = np.radians(float(self.firstSlider.get()))
         self.theta2 = np.radians(float(self.secondSlider.get()))
 
@@ -512,17 +512,11 @@ class App(Tk):
             data['values'] = {
                 'a1': 0.1475,
                 'a2': 0.195,
-                'theta1': np.radians(50),
-                'theta2': np.radians(-70),
-                'd3': 0.1  
             }
         else :
             data['values'] = {
                 'a1': 0.1475,
                 'a2': 0.195,
-                'theta1': np.radians(50),
-                'theta2': np.radians(-70),
-                'd3': 0.1  
             }
         with open('mydata.json', 'w') as output:
             json.dump(data, output)

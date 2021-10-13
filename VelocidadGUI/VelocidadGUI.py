@@ -191,7 +191,7 @@ class VelocidadGUI(Toplevel):
         if (self.name == 'Antropomorfico'):
 
             print(self.n-1,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf)
-            lista_q1,lista_q2,lista_q3 = Funciones.cinematicaDiferencial(self.n-1,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf)
+            lista_q1,lista_q2,lista_q3 = Funciones.cinematicaDiferencial(self.n-1,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf, self.codo)
             q1 = np.array(lista_q1)
             q2 = np.array(lista_q2)
             q3 = np.array(lista_q3)
@@ -237,7 +237,10 @@ class VelocidadGUI(Toplevel):
 
         else:            
             q = Funciones.SCARAVel(self.a1, self.a2, self.n, self.pep, self.xi, self.xf, self.yi, self.yf, self.zi, self.zf, self.codo)
-
+            print("Un comentario")
+            print(q[0:1,self.n-1],q[1:2,self.n-1],q[2:,self.n-1])
+            print("Un comentario matriz")
+            print(q)
             #The figure that will contain the plot
             fig = Figure(figsize =(10,10),dpi=100)
             #Plot
@@ -255,6 +258,7 @@ class VelocidadGUI(Toplevel):
             canvas.get_tk_widget().pack(expand=True)
 
             xPos, yPos, zPos = np.zeros((1,self.n)), np.zeros((1,self.n)), np.zeros((1,self.n))
+            
             #Calcular cinematica directa
             for i in range(self.n):
                 # theta, alpha, ai, di
@@ -263,6 +267,7 @@ class VelocidadGUI(Toplevel):
                 a3Matrix = Functions.matrixT(1.5708, 0, 0, q[2,i]/1000)
                 tMatrix = Functions.totalMatrix(a1Matrix, a2Matrix, a3Matrix)
                 xPos[0,i], yPos[0,i], zPos[0,i] = tMatrix[0,3], tMatrix[1,3], tMatrix[2,3]
+            
 
             #The figure that will contain the plot
             fig2 = Figure(figsize =(10,10),dpi=100)
@@ -276,15 +281,19 @@ class VelocidadGUI(Toplevel):
             canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
             canvas3D.draw()
             canvas3D.get_tk_widget().pack(expand=True)
+
+        self.__valueBoxXff.set(xPos[0,self.n-1])
+        self.__valueBoxYff.set(yPos[0,self.n-1])
+        self.__valueBoxZff.set(zPos[0,self.n-1])
+        self.__realFrame()
+        canvas.draw()
+        canvas3D.draw()
     
     def tomarDatos(self):
         with open('..\{fname}\mydata.json'.format(fname=self.controllerName)) as json_file:
                 data = json.load(json_file)
         self.a1 = data['values']['a1']
         self.a2 = data['values']['a2']
-        self.theta1 = data['values']['theta1']
-        self.theta2 = data['values']['theta2']
-        self.d3 = data['values']['d3']
         self.n = int(self.__valueBoxN.get())
         self.pep = float(self.__valueBoxV.get())
         self.xi = float(self.__valueBoxXi.get())

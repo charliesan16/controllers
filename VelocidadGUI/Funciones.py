@@ -8,7 +8,11 @@ import sys, os
 sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import Functions
 
-def SCARAVel(a1, a2, n, pep, xi, xf, yi, yf, zi, zf, codo):
+def SCARAVel(a1, a2, n, v, xi, xf, yi, yf, zi, zf, codo):
+    
+    d, pe = Pe_punto(xi,yi,zi,xf,yf,zf,v)
+    dt = deltaT(d,n,v)
+    
     P = [xi, yi, zi]
     L = [0.1475, 0.195, 0.3185]
     theta1Inv, theta1InvDown, theta2Inv, theta2InvDown, theta3Inv, theta3InvDown = Functions.inverseKinematics('SCARA', P, L)
@@ -20,29 +24,31 @@ def SCARAVel(a1, a2, n, pep, xi, xf, yi, yf, zi, zf, codo):
       theta1 = theta1InvDown
       theta2 = theta2InvDown
       d3 = theta3InvDown
+    
     q = np.zeros([3,n])
-    q[0,0], q[1,0], q[2,0] = theta1, theta2, d3
+    q[0,0], q[1,0], q[2,0] = np.radians(theta1), np.radians(theta2), d3
 
-    jpS = np.array([[-a2*np.sin(theta1+theta2)-a1*np.sin(theta1), -a2*np.sin(theta1+theta2), 0],
-                    [a2*np.cos(theta1+theta2)+a1*np.cos(theta1), a2*np.cos(theta1+theta2), 0],
-                    [0, 0, -1]])
+    print(theta1, theta2, d3)
+    print(np.radians(theta1), np.radians(theta2), d3)
 
-    invJPS = np.linalg.inv(jpS)
-
-    deltaX = xf-xi
-    deltaY = yf-yi
-    deltaZ = zf-zi
-    d = np.sqrt(((deltaX)**2)+((deltaY)**2)+((deltaZ)**2))
-    deltaT = d/(n*np.absolute(pep))
-    u = np.true_divide(np.array([[deltaX], [deltaY], [deltaZ]]), d)
-    pe = pep*u
+    invJpS = JacobianoInversoSCARA(a1,a2,theta1, theta2)
 
     # Ecuación de recursividad
     for i in range(n-1):
-        aux = q[:,i].reshape(3,1) + np.dot(np.dot(invJPS,pe),deltaT)
+        aux = q[:,i].reshape(3,1) + np.dot(np.dot(invJpS,pe),dt)
         q[0,i+1], q[1,i+1], q[2,i+1] = aux[0,0], aux[1,0], aux[2,0]
+        invJpS = JacobianoInversoSCARA(a1,a2, q[0,i+1], q[1,i+1])
 
     return q
+
+def JacobianoInversoSCARA(a1, a2, theta1, theta2):
+  jpS = np.array([[-a2*np.sin(theta1+theta2)-a1*np.sin(theta1), -a2*np.sin(theta1+theta2), 0],
+                    [a2*np.cos(theta1+theta2)+a1*np.cos(theta1), a2*np.cos(theta1+theta2), 0],
+                    [0, 0, -1]])
+  return np.linalg.inv(jpS)
+
+
+#Antropomorfico
 
 def Jacobiano_inverso(theta1,theta2,theta3):
   JP = array([[-1.5000e-30*(1.4263e+63*sin(theta1)*sin(theta3) - 1.0000e+30*cos(theta1)*cos(theta2)**2*cos(theta3) + 1.0000e+30*cos(theta1)*cos(theta2)*sin(theta2)*sin(theta3) + 1.0000e+30*cos(theta2)*cos(theta3)*sin(theta1)*sin(theta2))/(2*sin(theta3)*cos(theta2)**3 + sin(theta2)*cos(theta2)**2*cos(theta3) + 7.5199e+32*sin(theta3)*cos(theta2)*cos(theta3) + 2.9133e+32*sin(theta3)*cos(theta2) + 7.5199e+32*sin(theta2)*cos(theta3)**2 - 7.5199e+32*sin(theta2)),
@@ -62,7 +68,7 @@ def Pe_punto(xi,yi,zi,xf,yf,zf,v):
   deltax = xf-xi
   deltay = yf-yi
   deltaz = zf-zi
-  d = sqrt((deltax*2) + (deltay*2) + (deltaz*2))
+  d = sqrt((deltax**2) + (deltay**2) + (deltaz**2))
   u = array([[deltax],[deltay],[deltaz]]) / d
   Pe_p = u * v
   return d, Pe_p
@@ -72,13 +78,13 @@ def inversaAntro(px, py, pz):
     L2 = 0.13617
     L3 = 0.35149
 
-    theta1= np.degrees(np.arctan2(py,px))
+    theta1= np.arctan2(py,px)
 
     costheta3 = (px**2+py**2 + (pz-L1)**2 - L2**2 - L3**2)/(2*L2*L3)
     theta3rad = np.arccos(costheta3)
-    theta3deg = np.degrees(theta3rad)
-    alpha =  np.degrees(np.arctan2(pz-L1,(px**2+py**2)**(1/2)))
-    beta = np.degrees(np.arctan2((L3*np.sin(theta3rad)),(L2+L3*np.cos(theta3rad))))
+    theta3deg = theta3rad
+    alpha =  np.arctan2(pz-L1,(px**2+py**2)**(1/2))
+    beta = np.arctan2((L3*np.sin(theta3rad)),(L2+L3*np.cos(theta3rad)))
 
     theta2up = alpha - beta
     theta2down = alpha + beta
@@ -91,11 +97,23 @@ def deltaT(d,n,v):
   delta_t = (d)/(n*v)
   return delta_t
 
-def cinematicaDiferencial(n,v,xi,yi,zi,xf,yf,zf):
+def cinematicaDiferencial(n,v,xi,yi,zi,xf,yf,zf, codo):
   d, Pe_p = Pe_punto(xi,yi,zi,xf,yf,zf,v)
   dt = deltaT(d,n,v)
-  theta1, theta2, theta3 =  inversaAntro(xi,yi,zi)
-  qi = array([[np.deg2rad(theta1)],[np.deg2rad(theta2)],[np.deg2rad(theta3)]])
+  P = [xi, yi, zi]
+  L = [0.155, 0.13617, 0.35149]
+  theta1Inv, theta1InvDown, theta2Inv, theta2InvDown, theta3Inv, theta3InvDown = Functions.inverseKinematics('Antropomorfico', P, L)
+
+  if codo=='arriba':
+    theta1 = theta1Inv
+    theta2 = theta2Inv
+    theta3 = theta3Inv
+  else:
+    theta1 = theta1InvDown
+    theta2 = theta2InvDown
+    theta3 = theta3InvDown
+
+  qi = array([[np.radians(theta1)],[np.radians(theta2)],[np.radians(theta3)]])
 
   lista_q1 = [qi[0].item()]
   lista_q2 = [qi[1].item()]

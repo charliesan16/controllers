@@ -1,9 +1,9 @@
 import numpy as np
 
 def matrixT(theta, alpha, a, d):
-    matriz = np.array([[np.cos(theta), -np.sin(theta)*np.cos(alpha),  np.sin(theta)*np.sin(alpha),  a*np.cos(theta)],
-                      [np.sin(theta),  np.cos(theta)*np.cos(alpha), -np.cos(theta)*np.sin(alpha),  a*np.sin(theta)],
-                      [0,              np.sin(alpha),                np.cos(alpha),                d               ],
+    matriz = np.array([[np.cos(theta), -np.sin(theta)*np.cos(alpha),  -np.sin(theta)*np.sin(alpha),  a*np.cos(theta)],
+                      [np.sin(theta),  np.cos(theta)*np.cos(alpha), np.cos(theta)*np.sin(alpha),  a*np.sin(theta)],
+                      [0,              -np.sin(alpha),                np.cos(alpha),                d               ],
                       [0,              0,                            0,                            1               ]])
     return matriz
 
@@ -19,10 +19,10 @@ def inverseKinematics(name, P, L):
         alpha = np.degrees(np.arctan2(P[2]-L[0],(P[0]**2+P[1]**2)**(1/2)))
         beta = np.degrees(np.arctan2((L[2]*np.sin(theta3rad)),(L[1]+L[2]*np.cos(theta3rad))))
 
-        theta2up = -alpha + beta
-        theta2down = -(alpha + beta)
-        theta3up = -theta3deg
-        theta3down = theta3deg
+        theta2up = alpha - beta
+        theta2down = alpha + beta
+        theta3up = theta3deg
+        theta3down = -theta3deg
 
         return theta1, theta1, theta2up, theta2down, theta3up, theta3down
     else:
@@ -36,5 +36,5 @@ def inverseKinematics(name, P, L):
         theta1up = np.degrees(alpha + beta)
         theta1down =  np.degrees(alpha - beta)
 
-        return theta1up, theta1down, -theta2, theta2, theta3, theta3 
+        return theta1up, theta1down, -theta2, theta2, theta3*100, theta3*100 
     
