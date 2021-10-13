@@ -16,6 +16,7 @@ class App(Tk):
         self.height = int(features['height'])
         self.dimension = features['width']+"x"+features['height']
         self.name = features['robotName']
+        self.controllerName = features['controllerName']
             #Imagen
         self.path = features['imagePath']
         self._img = None
@@ -515,8 +516,6 @@ class App(Tk):
                 'theta2': np.radians(-70),
                 'd3': 0.1  
             }
-            with open('mydata.json', 'w') as output:
-                json.dump(data, output)
         else :
             data['values'] = {
                 'a1': 0.1475,
@@ -527,5 +526,5 @@ class App(Tk):
             }
         with open('mydata.json', 'w') as output:
             json.dump(data, output)
-        window = VelocidadGUI(self, self.name)
+        window = VelocidadGUI(self, self.name, self.controllerName, self.__flag)
         window.grab_set()

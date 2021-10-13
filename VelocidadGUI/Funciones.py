@@ -4,12 +4,24 @@ from numpy.core.fromnumeric import size
 import matplotlib.pyplot as plt
 from numpy import sin, cos, array, arange, rad2deg
 from math import sqrt
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('..', 'App')))
+from App import Functions
 
-def SCARAVel(a1, a2, theta1, theta2, n, pep, xi, xf, yi, yf, zi, zf, d3):
-    
+def SCARAVel(a1, a2, n, pep, xi, xf, yi, yf, zi, zf, codo):
+    P = [xi, yi, zi]
+    L = [0.1475, 0.195, 0.3185]
+    theta1Inv, theta1InvDown, theta2Inv, theta2InvDown, theta3Inv, theta3InvDown = Functions.inverseKinematics('SCARA', P, L)
+    if codo=='arriba':
+      theta1 = theta1Inv
+      theta2 = theta2Inv
+      d3 = theta3Inv
+    else:
+      theta1 = theta1InvDown
+      theta2 = theta2InvDown
+      d3 = theta3InvDown
     q = np.zeros([3,n])
     q[0,0], q[1,0], q[2,0] = theta1, theta2, d3
-
 
     jpS = np.array([[-a2*np.sin(theta1+theta2)-a1*np.sin(theta1), -a2*np.sin(theta1+theta2), 0],
                     [a2*np.cos(theta1+theta2)+a1*np.cos(theta1), a2*np.cos(theta1+theta2), 0],
@@ -79,12 +91,12 @@ def deltaT(d,n,v):
   delta_t = (d)/(n*v)
   return delta_t
 
-def cinematicaDiferencial(n,v,xi,yi,zi,xf,yf,zf,codo):
+def cinematicaDiferencial(n,v,xi,yi,zi,xf,yf,zf):
   d, Pe_p = Pe_punto(xi,yi,zi,xf,yf,zf,v)
   dt = deltaT(d,n,v)
   theta1, theta2, theta3 =  inversaAntro(xi,yi,zi)
   qi = array([[np.deg2rad(theta1)],[np.deg2rad(theta2)],[np.deg2rad(theta3)]])
-  # print(qi)
+
   lista_q1 = [qi[0].item()]
   lista_q2 = [qi[1].item()]
   lista_q3 = [qi[2].item()]
@@ -97,48 +109,6 @@ def cinematicaDiferencial(n,v,xi,yi,zi,xf,yf,zf,codo):
     qi = qi_1
     lista_q1.append(qi_1[0].item())
     lista_q2.append(qi_1[1].item())
-    lista_q3.append(qi_1[2].item())}
-
-
+    lista_q3.append(qi_1[2].item())
   return rad2deg(lista_q1),rad2deg(lista_q2),rad2deg(lista_q3)
-
-def grafica(n,y,ylabel):
-  x = arange(0,n+1,1)
-  plt.plot(x,y)
-  plt.xlabel('t')
-  plt.ylabel(ylabel)
-  plt.title('test')
-  plt.show()
-
-def obtener_puntos_XYZ(n,lista_q1,lista_q2,lista_q3):
-  posicionesX = []
-  posicionesY = []
-  posicionesZ = []
-  for i in range(n):
-    dh = dhParametrosa(lista_q1[i],lista_q2[i],lista_q3[i])
-    x,y,z,e = cinematicaDirectaa(dh)
-    posicionesX.append(e[0,3])
-    posicionesY.append(e[1,3])
-    posicionesZ.append(e[2,3])
-
-  return posicionesX,posicionesY,posicionesZ
-
-def grafica3d(posicionesX,posicionesY,posicionesZ):
-  # Creamos la figura
-  fig = plt.figure()
-
-  # Agrrgamos un plano 3D
-  ax1 = fig.add_subplot(111,projection='3d')
-
-  # Datos en array bi-dimensional
-  x = array([posicionesX])
-  y = array([posicionesY])
-  z = array([posicionesZ])
-
-  # plot_wireframe nos permite agregar los datos x, y, z. Por ello 3D
-  # Es necesario que los datos esten contenidos en un array bi-dimensional
-  ax1.plot_wireframe(x, y, z)
-
-  # Mostramos el gráfico
-  plt.show()
 

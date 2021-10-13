@@ -13,11 +13,13 @@ sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import Functions
 
 class VelocidadGUI(Toplevel):
-    def __init__(self, parent, name):
+    def __init__(self, parent, name, controllerName, codo):
         super().__init__(parent)
         self.width = 1366
         self.height = 768
         self.name = name
+        self.controllerName = controllerName
+        self.codo = codo
         self.__framePlots = None
         self.__frame3DPlot = None
         self.__valueBoxXi = StringVar(0)
@@ -42,6 +44,19 @@ class VelocidadGUI(Toplevel):
         self.__valueBoxXff.set(0)
         self.__valueBoxYff.set(0)
         self.__valueBoxZff.set(0)
+        self.n = 0
+        self.pep = 0
+        self.xi = 0
+        self.xf = 0
+        self.yi = 0
+        self.yf = 0
+        self.zi = 0
+        self.zf = 0
+        self.a1 = 0
+        self.a2 = 0
+        self.theta1 = 0
+        self.theta2 = 0
+        self.d3 = 0
         self.__diferentialColor = '#23395B'
         self.__plotsColor = 'white'
         self.__frameDiferentialKinematics = None
@@ -173,50 +188,75 @@ class VelocidadGUI(Toplevel):
 
     def buttonCalcular(self):
         self.tomarDatos()
-
         if (self.name == 'Antropomorfico'):
-            pass
-        else:
-            with open('..\ScaraController\mydata.json') as json_file:
-                data = json.load(json_file)
-            a1 = data['values']['a1']
-            a2 = data['values']['a2']
-            theta1 = data['values']['theta1']
-            theta2 = data['values']['theta2']
 
-            n = int(self.__valueBoxN.get())
-            pep = float(self.__valueBoxV.get())
-            xi = float(self.__valueBoxXi.get())
-            xf = float(self.__valueBoxXf.get())
-            yi = float(self.__valueBoxYi.get())
-            yf = float(self.__valueBoxYf.get())
-            zi = float(self.__valueBoxZf.get())
-            zf = float(self.__valueBoxZf.get())
-
-            d3 = data['values']['d3']
-
-            q = Funciones.SCARAVel(a1, a2, theta1, theta2,
-            n, pep, xi, xf, yi, yf, zi, zf, d3)
+            print(self.n-1,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf)
+            lista_q1,lista_q2,lista_q3 = Funciones.cinematicaDiferencial(self.n-1,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf)
+            q1 = np.array(lista_q1)
+            q2 = np.array(lista_q2)
+            q3 = np.array(lista_q3)
 
             #The figure that will contain the plot
             fig = Figure(figsize =(10,10),dpi=100)
             #Plot
             plot1 = fig.add_subplot(131)
-            plot1.plot(np.arange(n), q[0:1,:].T, 'bo', np.arange(n), q[0:1,:].T, 'k') 
+            plot1.plot(np.arange(self.n), q1, 'bo', np.arange(self.n), q1, 'k') 
 
             plot2 = fig.add_subplot(132)
-            plot2.plot(np.arange(n), q[1:2,:].T, 'bo', np.arange(n), q[1:2,:].T, 'k')
+            plot2.plot(np.arange(self.n), q2, 'bo', np.arange(self.n), q2, 'k')
 
             plot3 = fig.add_subplot(133)
-            plot3.plot(np.arange(n), q[2:,:].T, 'bo', np.arange(n), q[2:,:].T, 'k')
+            plot3.plot(np.arange(self.n), q3, 'bo', np.arange(self.n), q3, 'k')
+
+            canvas = FigureCanvasTkAgg(fig,master = self.__framePlots)
+            canvas.draw()
+            canvas.get_tk_widget().pack(expand=True)
+            
+            xPos, yPos, zPos = np.zeros((1,self.n)), np.zeros((1,self.n)), np.zeros((1,self.n))
+
+            for i in range(self.n):
+                # theta, alpha, ai, dis
+                a1Matrix = Functions.matrixT(np.radians(q1[i]), -1.5708, 0, 0.1555)
+                a2Matrix = Functions.matrixT(np.radians(q2[i]), 0, 0.13617, 0)
+                a3Matrix = Functions.matrixT(np.radians(q3[i]), 0, 0.35149, 0)
+                tMatrix = Functions.totalMatrix(a1Matrix, a2Matrix, a3Matrix)
+                xPos[0,i], yPos[0,i], zPos[0,i] = tMatrix[0,3], tMatrix[1,3], tMatrix[2,3]
+
+            #The figure that will contain the plot
+            fig2 = Figure(figsize =(10,10),dpi=100)
+            #Plot
+            plot3DPlot = fig2.add_subplot(111, projection = '3d')
+            zline = zPos[0,:]
+            xline = xPos[0,:]
+            yline = yPos[0,:]
+            plot3DPlot.plot3D(xline, yline, zline, 'gray')
+
+            canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
+            canvas3D.draw()
+            canvas3D.get_tk_widget().pack(expand=True)
+
+        else:            
+            q = Funciones.SCARAVel(self.a1, self.a2, self.n, self.pep, self.xi, self.xf, self.yi, self.yf, self.zi, self.zf, self.codo)
+
+            #The figure that will contain the plot
+            fig = Figure(figsize =(10,10),dpi=100)
+            #Plot
+            plot1 = fig.add_subplot(131)
+            plot1.plot(np.arange(self.n), q[0:1,:].T, 'bo', np.arange(self.n), q[0:1,:].T, 'k') 
+
+            plot2 = fig.add_subplot(132)
+            plot2.plot(np.arange(self.n), q[1:2,:].T, 'bo', np.arange(self.n), q[1:2,:].T, 'k')
+
+            plot3 = fig.add_subplot(133)
+            plot3.plot(np.arange(self.n), q[2:,:].T, 'bo', np.arange(self.n), q[2:,:].T, 'k')
 
             canvas = FigureCanvasTkAgg(fig,master = self.__framePlots)
             canvas.draw()
             canvas.get_tk_widget().pack(expand=True)
 
-            xPos, yPos, zPos = np.zeros((1,n)), np.zeros((1,n)), np.zeros((1,n))
+            xPos, yPos, zPos = np.zeros((1,self.n)), np.zeros((1,self.n)), np.zeros((1,self.n))
             #Calcular cinematica directa
-            for i in range(n):
+            for i in range(self.n):
                 # theta, alpha, ai, di
                 a1Matrix = Functions.matrixT(q[0,i], 0, 0.1475, 0.3185)
                 a2Matrix = Functions.matrixT(q[1,i], 3.14159, 0.195, 0)
@@ -237,12 +277,19 @@ class VelocidadGUI(Toplevel):
             canvas3D.draw()
             canvas3D.get_tk_widget().pack(expand=True)
     
-    def tomarDatos():
-        n = int(self.__valueBoxN.get())
-        pep = float(self.__valueBoxV.get())
-        xi = float(self.__valueBoxXi.get())
-        xf = float(self.__valueBoxXf.get())
-        yi = float(self.__valueBoxYi.get())
-        yf = float(self.__valueBoxYf.get())
-        zi = float(self.__valueBoxZf.get())
-        zf = float(self.__valueBoxZf.get())
+    def tomarDatos(self):
+        with open('..\{fname}\mydata.json'.format(fname=self.controllerName)) as json_file:
+                data = json.load(json_file)
+        self.a1 = data['values']['a1']
+        self.a2 = data['values']['a2']
+        self.theta1 = data['values']['theta1']
+        self.theta2 = data['values']['theta2']
+        self.d3 = data['values']['d3']
+        self.n = int(self.__valueBoxN.get())
+        self.pep = float(self.__valueBoxV.get())
+        self.xi = float(self.__valueBoxXi.get())
+        self.xf = float(self.__valueBoxXf.get())
+        self.yi = float(self.__valueBoxYi.get())
+        self.yf = float(self.__valueBoxYf.get())
+        self.zi = float(self.__valueBoxZi.get())
+        self.zf = float(self.__valueBoxZf.get())
