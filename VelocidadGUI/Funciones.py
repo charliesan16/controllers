@@ -28,9 +28,6 @@ def SCARAVel(a1, a2, n, v, xi, xf, yi, yf, zi, zf, codo):
     q = np.zeros([3,n])
     q[0,0], q[1,0], q[2,0] = np.radians(theta1), np.radians(theta2), d3
 
-    print(theta1, theta2, d3)
-    print(np.radians(theta1), np.radians(theta2), d3)
-
     invJpS = JacobianoInversoSCARA(a1,a2,theta1, theta2)
 
     # Ecuación de recursividad
@@ -61,7 +58,6 @@ def Jacobiano_inverso(theta1,theta2,theta3):
                -1.5000e-31*(2.0004e+63*sin(theta1 - 2*theta2) + 7.6243e+62*sin(theta1 + 2*theta2) + 7.1315e+63*sin(theta1 - theta3) - 1.3328e+64*sin(2*theta2 - theta1 + 2*theta3) + 5.0000e+30*sin(theta1 - 2*theta2 + theta3) + 3.9360e+63*sin(theta1 + 2*theta2 + theta3) + 7.1315e+63*sin(theta1 + theta3) + 2.1171e+64*sin(theta1) - 5.0000e+30*sin(theta1 + 2*theta2 - theta3) - 1.0327e+64*sin(2*theta2 - theta1 + theta3) + 5.0800e+63*sin(theta1 + 2*theta2 + 2*theta3))/(3.7600e+32*sin(theta2 + 2*theta3) - 1.4566e+32*sin(theta2 - theta3) + sin(3*theta2 + theta3)/4 + 1.4566e+32*sin(theta2 + theta3) - 3.7600e+32*sin(theta2)),
                -(5.0000e-32*(3.8253e+64*sin(2*theta2 + theta3) + 7.4098e+63*sin(2*theta2) + 4.9371e+64*sin(2*theta2 + 2*theta3)))/(1.4566e+32*sin(theta2 - theta3) - 3.7600e+32*sin(theta2 + 2*theta3) - 0.375*sin(3*theta2 + theta3) + 0.125*sin(3*theta2 - theta3) - 1.4566e+32*sin(theta2 + theta3) + 3.7600e+32*sin(theta2))]])
 
-
   return JP
 
 def Pe_punto(xi,yi,zi,xf,yf,zf,v):
@@ -72,26 +68,6 @@ def Pe_punto(xi,yi,zi,xf,yf,zf,v):
   u = array([[deltax],[deltay],[deltaz]]) / d
   Pe_p = u * v
   return d, Pe_p
-
-def inversaAntro(px, py, pz):
-    L1 = 0.1555
-    L2 = 0.13617
-    L3 = 0.35149
-
-    theta1= np.arctan2(py,px)
-
-    costheta3 = (px**2+py**2 + (pz-L1)**2 - L2**2 - L3**2)/(2*L2*L3)
-    theta3rad = np.arccos(costheta3)
-    theta3deg = theta3rad
-    alpha =  np.arctan2(pz-L1,(px**2+py**2)**(1/2))
-    beta = np.arctan2((L3*np.sin(theta3rad)),(L2+L3*np.cos(theta3rad)))
-
-    theta2up = alpha - beta
-    theta2down = alpha + beta
-    theta3up = theta3deg
-    theta3down = -theta3deg
-
-    return theta1, theta2down, theta3down
 
 def deltaT(d,n,v):
   delta_t = (d)/(n*v)
@@ -113,20 +89,15 @@ def cinematicaDiferencial(n,v,xi,yi,zi,xf,yf,zf, codo):
     theta2 = theta2InvDown
     theta3 = theta3InvDown
 
-  qi = array([[np.radians(theta1)],[np.radians(theta2)],[np.radians(theta3)]])
+  qi = np.zeros([3,n])
+  qi[0,0], qi[1,0], qi[2,0] = np.radians(theta1), np.radians(theta2), np.radians(theta3)
 
-  lista_q1 = [qi[0].item()]
-  lista_q2 = [qi[1].item()]
-  lista_q3 = [qi[2].item()]
+  invJpS1 = Jacobiano_inverso(np.radians(theta1), np.radians(theta2), np.radians(theta3))
 
-  for i in range(n):
-    JP = Jacobiano_inverso(qi[0].item(),qi[1].item(),qi[2].item())
-    t1 = JP @ Pe_p
-    t2 = t1*dt
-    qi_1 = qi + t2
-    qi = qi_1
-    lista_q1.append(qi_1[0].item())
-    lista_q2.append(qi_1[1].item())
-    lista_q3.append(qi_1[2].item())
-  return rad2deg(lista_q1),rad2deg(lista_q2),rad2deg(lista_q3)
-
+  # Ecuación de recursividad
+  for i in range(n-1):
+      aux1 = qi[:,i].reshape(3,1) + np.dot(np.dot(invJpS1, Pe_p),dt)
+      qi[0,i+1], qi[1,i+1], qi[2,i+1] = aux1[0,0], aux1[1,0], aux1[2,0]
+      invJpS1 = Jacobiano_inverso(qi[0,i+1],qi[1,i+1],qi[2,i+1])
+  
+  return rad2deg(qi[0,:]), rad2deg(qi[1,:]), rad2deg(qi[2,:])

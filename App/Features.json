@@ -64,9 +64,9 @@
             "robotName":"SCARA",
             "imagePath":"../App/SCARA.png",
             "controllerName":"ScaraController",
-            "tituloArticulacion1":"Titulo1",
-            "tituloArticulacion2":"Titulo2",
-            "tituloArticulacion3":"Titulo3",
+            "tituloArticulacion1":"Art. 1",
+            "tituloArticulacion2":"Art. 2",
+            "tituloArticulacion3":"Art. 3",
             "sliderValues":[
                 {
                     "min1":-180,

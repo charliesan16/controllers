@@ -189,9 +189,7 @@ class VelocidadGUI(Toplevel):
     def buttonCalcular(self):
         self.tomarDatos()
         if (self.name == 'Antropomorfico'):
-
-            print(self.n-1,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf)
-            lista_q1,lista_q2,lista_q3 = Funciones.cinematicaDiferencial(self.n-1,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf, self.codo)
+            lista_q1,lista_q2,lista_q3 = Funciones.cinematicaDiferencial(self.n,self.pep,self.xi,self.yi,self.zi,self.xf,self.yf,self.zf, self.codo)
             q1 = np.array(lista_q1)
             q2 = np.array(lista_q2)
             q3 = np.array(lista_q3)
@@ -200,13 +198,19 @@ class VelocidadGUI(Toplevel):
             fig = Figure(figsize =(10,10),dpi=100)
             #Plot
             plot1 = fig.add_subplot(131)
-            plot1.plot(np.arange(self.n), q1, 'bo', np.arange(self.n), q1, 'k') 
+            plot1.plot(np.arange(self.n), q1, 'bo', np.arange(self.n), q1, 'k')
+            plot1.set_xlabel('n')
+            plot1.set_ylabel('θ1')
 
             plot2 = fig.add_subplot(132)
             plot2.plot(np.arange(self.n), q2, 'bo', np.arange(self.n), q2, 'k')
+            plot2.set_xlabel('n')
+            plot2.set_ylabel('θ2')
 
             plot3 = fig.add_subplot(133)
             plot3.plot(np.arange(self.n), q3, 'bo', np.arange(self.n), q3, 'k')
+            plot3.set_xlabel('n')
+            plot3.set_ylabel('θ3')
 
             canvas = FigureCanvasTkAgg(fig,master = self.__framePlots)
             canvas.draw()
@@ -230,6 +234,9 @@ class VelocidadGUI(Toplevel):
             xline = xPos[0,:]
             yline = yPos[0,:]
             plot3DPlot.plot3D(xline, yline, zline, 'gray')
+            plot3DPlot.set_xlabel('px')
+            plot3DPlot.set_ylabel('py')
+            plot3DPlot.set_zlabel('pz')
 
             canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
             canvas3D.draw()
@@ -245,13 +252,19 @@ class VelocidadGUI(Toplevel):
             fig = Figure(figsize =(10,10),dpi=100)
             #Plot
             plot1 = fig.add_subplot(131)
-            plot1.plot(np.arange(self.n), q[0:1,:].T, 'bo', np.arange(self.n), q[0:1,:].T, 'k') 
+            plot1.plot(np.arange(self.n), q[0:1,:].T, 'bo', np.arange(self.n), q[0:1,:].T, 'k')
+            plot1.set_xlabel('n')
+            plot1.set_ylabel('θ1')
 
             plot2 = fig.add_subplot(132)
             plot2.plot(np.arange(self.n), q[1:2,:].T, 'bo', np.arange(self.n), q[1:2,:].T, 'k')
+            plot2.set_xlabel('n')
+            plot2.set_ylabel('θ2')
 
             plot3 = fig.add_subplot(133)
             plot3.plot(np.arange(self.n), q[2:,:].T, 'bo', np.arange(self.n), q[2:,:].T, 'k')
+            plot3.set_xlabel('n')
+            plot3.set_ylabel('d3')
 
             canvas = FigureCanvasTkAgg(fig,master = self.__framePlots)
             canvas.draw()
@@ -277,6 +290,9 @@ class VelocidadGUI(Toplevel):
             xline = xPos[0,:]
             yline = yPos[0,:]
             plot3DPlot.plot3D(xline, yline, zline, 'gray')
+            plot3DPlot.set_xlabel('px')
+            plot3DPlot.set_ylabel('py')
+            plot3DPlot.set_zlabel('pz')
 
             canvas3D = FigureCanvasTkAgg(fig2,master = self.__frame3DPlot)
             canvas3D.draw()
@@ -286,8 +302,6 @@ class VelocidadGUI(Toplevel):
         self.__valueBoxYff.set(yPos[0,self.n-1])
         self.__valueBoxZff.set(zPos[0,self.n-1])
         self.__realFrame()
-        canvas.draw()
-        canvas3D.draw()
     
     def tomarDatos(self):
         with open('..\{fname}\mydata.json'.format(fname=self.controllerName)) as json_file:
