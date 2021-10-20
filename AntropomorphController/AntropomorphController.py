@@ -6,7 +6,7 @@ import json
 import threading
 
 from controller import Robot
-
+'''
 # create the Robot instance.
 robot = Robot()
 timestep = 64
@@ -32,3 +32,4 @@ hilo_main.start()
 
 
 window.mainloop()
+'''

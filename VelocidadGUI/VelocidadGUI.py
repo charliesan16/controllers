@@ -108,7 +108,7 @@ class VelocidadGUI(Toplevel):
         labelV = Label(dataFrame, text="V", bg = frameColor, fg=foregroundLetter, font = fontSize)
         V = Entry(dataFrame, textvariable=self.__valueBoxV, width = 20, bg = boxColor)
 
-        labelN = Label(dataFrame, text="n", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        labelN = Label(dataFrame, text="tf", bg = frameColor, fg=foregroundLetter, font = fontSize)
         N = Entry(dataFrame, textvariable=self.__valueBoxN, width = 20, bg = boxColor)
 
         #Grilla

@@ -1,11 +1,13 @@
+import sys, os
 from tkinter import *
 import tkinter.ttk as ttk
 from PIL import ImageTk, Image
 import numpy as np
 import Functions 
-import sys, os
 sys.path.append(os.path.abspath(os.path.join('..', 'VelocidadGUI')))
 from VelocidadGUI import VelocidadGUI
+sys.path.append(os.path.abspath(os.path.join('..', 'TrayectoriaGUI')))
+from TrayectoriaGUI import TrayectoriaGUI
 import json
 
 class App(Tk):
@@ -367,7 +369,8 @@ class App(Tk):
         labelPz = Label(frameInverse, text="Pz", bg = self.__frameInverserColor, fg = self.__fontColorInverse)
         Pz = Entry(frameInverse, width = 20, bg = self.__boxColor, textvariable = self.__valuePz)
         #Boton Inversa
-        buttonInverse = Button(frameInverse, text='Cinematica Diferencial', bg=self.__buttonColor, fg = self.__fontColorButton, command= self.buttonDiferential) 
+        buttonInverse = Button(frameInverse, text='Cinematica Diferencial', bg=self.__buttonColor, fg = self.__fontColorButton, command= self.buttonDiferential)
+        buttonPath = Button(frameInverse, text='Trayectoria', bg=self.__buttonColor, fg = self.__fontColorButton, command= self.buttonPathPlanning) 
         
         #Configurar Grilla Puntos
         labelPx.grid(row=0,column=0, sticky="nsew")
@@ -376,7 +379,8 @@ class App(Tk):
         Px.grid(row=0,column=1)
         Py.grid(row=1,column=1)
         Pz.grid(row=2,column=1)
-        buttonInverse.grid(row=0,column=2, rowspan=3, columnspan=2, sticky="nsew")
+        buttonInverse.grid(row=0,column=2, rowspan=1, columnspan=3, sticky="nsew")
+        buttonPath.grid(row=2,column=2, rowspan=1, columnspan=3, sticky="nsew")
         for i in range(4):
             frameInverse.columnconfigure(i, weight=1)
 
@@ -521,4 +525,8 @@ class App(Tk):
         with open('mydata.json', 'w') as output:
             json.dump(data, output)
         window = VelocidadGUI(self, self.name, self.controllerName, self.__flag)
+        window.grab_set()
+
+    def buttonPathPlanning(self):
+        window = TrayectoriaGUI(self, self.name, self.controllerName, self.__flag)
         window.grab_set()
