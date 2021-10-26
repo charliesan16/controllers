@@ -70,42 +70,58 @@ class TrayectoriaGUI(Toplevel):
         fontSize =("Arial", 15)
         topFrame = Frame(self.__lefFrameParent, bg = frameColor)
         topFrame.place(x=0,y=0, width= self.width*0.3, height=self.height*0.3)
+
+        topFrameLeft = Frame(topFrame, bg = frameColor, borderwidth=5, relief=SUNKEN)
+        topFrameLeft.place(x=0,y=0, width= self.width*0.3*0.3, height=self.height*0.3)
+        topFrameBoxes = Frame(topFrame, bg=frameColor)
+        topFrameBoxes.place(relx=0.3,y=0, width= self.width*0.3*0.7, height=self.height*0.3)
+        topFrameRightUp = Frame(topFrameBoxes, bg = frameColor, borderwidth=5, relief=SUNKEN)
+        topFrameRightUp.place(x=0,y=0, width= self.width*0.3*0.7, height=self.height*0.3*0.75)
+        topFrameRightDown = Frame(topFrameBoxes, bg = frameColor, borderwidth=5, relief=SUNKEN)
+        topFrameRightDown.place(x=0,rely=0.75, width= self.width*0.3*0.7, height=self.height*0.3*0.25)
+
         #Orientación
         ttk.Style().configure('Wild.TRadiobutton', background = frameColor, foreground=foregroundLetter)
-        rbCodoArriba = ttk.Radiobutton(topFrame, text='Codo Arriba', variable=self.my_var, value=5, style = 'Wild.TRadiobutton')
-        rbCodoAbajo = ttk.Radiobutton(topFrame, text='Codo Abajo', variable=self.my_var, value=10, style = 'Wild.TRadiobutton')
+        rbCodoArriba = ttk.Radiobutton(topFrameLeft, text='Codo Arriba', variable=self.my_var, value=5, style = 'Wild.TRadiobutton')
+        rbCodoAbajo = ttk.Radiobutton(topFrameLeft, text='Codo Abajo', variable=self.my_var, value=10, style = 'Wild.TRadiobutton')
 
-        rbCodoArriba.grid(row=0, column=0)
-        rbCodoAbajo.grid(row=1, column=0)
+        rbCodoArriba.grid(row=0, column=0, sticky="we")
+        rbCodoAbajo.grid(row=1, column=0, sticky="we")
         #Perfil
-        rbPolinomial = ttk.Radiobutton(topFrame, text='Polinomial', variable=self.my_var, value=15, style = 'Wild.TRadiobutton')
-        rbTrapezoidalA = ttk.Radiobutton(topFrame, text='Trapezoidal A', variable=self.my_var, value=20, style = 'Wild.TRadiobutton')
-        rbTrapezoidalV = ttk.Radiobutton(topFrame, text='Trapezoidal V', variable=self.my_var, value=25, style = 'Wild.TRadiobutton')
+        rbPolinomial = ttk.Radiobutton(topFrameLeft, text='Polinomial', variable=self.my_var, value=15, style = 'Wild.TRadiobutton')
+        rbTrapezoidalA = ttk.Radiobutton(topFrameLeft, text='Trapezoidal A', variable=self.my_var, value=20, style = 'Wild.TRadiobutton')
+        rbTrapezoidalV = ttk.Radiobutton(topFrameLeft, text='Trapezoidal V', variable=self.my_var, value=25, style = 'Wild.TRadiobutton')
 
-        rbPolinomial.grid(row=2, column=0)
-        rbTrapezoidalA.grid(row=3, column=0)
-        rbTrapezoidalV.grid(row=4, column=0)
+        rbPolinomial.grid(row=2, column=0, sticky="we")
+        rbTrapezoidalA.grid(row=3, column=0, sticky="we")
+        rbTrapezoidalV.grid(row=4, column=0, sticky="we")
+
+        for i in range(5):
+            topFrameLeft.rowconfigure(i, weight=1)
+        for i in range(1):
+            topFrameLeft.columnconfigure(i, weight=1)
+
         #Datos de entrada
-        labelXi = Label(topFrame, text="xi", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        Xi = Entry(topFrame, textvariable=self.__valueBoxXi, bg = boxColor)
+        labelXi = Label(topFrameRightUp, text="xi", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        Xi = Entry(topFrameRightUp, textvariable=self.__valueBoxXi, bg = boxColor)
 
-        labelXf = Label(topFrame, text="xf", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        Xf = Entry(topFrame, textvariable=self.__valueBoxXf, bg = boxColor)
+        labelXf = Label(topFrameRightUp, text="xf", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        Xf = Entry(topFrameRightUp, textvariable=self.__valueBoxXf, bg = boxColor)
 
-        labelYi = Label(topFrame, text="yi", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        Yi = Entry(topFrame, textvariable=self.__valueBoxYi, bg = boxColor)
+        labelYi = Label(topFrameRightUp, text="yi", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        Yi = Entry(topFrameRightUp, textvariable=self.__valueBoxYi, bg = boxColor)
 
-        labelYf = Label(topFrame, text="yf", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        Yf = Entry(topFrame, textvariable=self.__valueBoxYf, bg = boxColor)
+        labelYf = Label(topFrameRightUp, text="yf", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        Yf = Entry(topFrameRightUp, textvariable=self.__valueBoxYf, bg = boxColor)
 
-        labelZi = Label(topFrame, text="zi", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        Zi = Entry(topFrame, textvariable=self.__valueBoxZi, bg = boxColor)
+        labelZi = Label(topFrameRightUp, text="zi", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        Zi = Entry(topFrameRightUp, textvariable=self.__valueBoxZi, bg = boxColor)
 
-        labelZf = Label(topFrame, text="zf", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        Zf = Entry(topFrame, textvariable=self.__valueBoxZf, bg = boxColor)
+        labelZf = Label(topFrameRightUp, text="zf", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        Zf = Entry(topFrameRightUp, textvariable=self.__valueBoxZf, bg = boxColor)
 
-        labelN = Label(topFrame, text="n", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        N = Entry(topFrame, textvariable=self.__valueBoxN, bg = boxColor)
+        labelTf = Label(topFrameRightDown, text="tf", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        Tf = Entry(topFrameRightDown, textvariable=self.__valueBoxN, bg = boxColor)
 
         #Grilla
         labelXi.grid(row=0, column=1)
@@ -114,21 +130,25 @@ class TrayectoriaGUI(Toplevel):
         labelYf.grid(row=1, column=3)
         labelZi.grid(row=2, column=1)
         labelZf.grid(row=2, column=3)
-        labelN.grid(row=3, column=1)
-
         Xi.grid(row=0, column=2)
         Xf.grid(row=0, column=4)
         Yi.grid(row=1, column=2)
         Yf.grid(row=1, column=4)
         Zi.grid(row=2, column=2)
         Zf.grid(row=2, column=4)
-        N.grid(row=3, column=2)
 
-        for i in range(4):
-            topFrame.rowconfigure(i, weight=1)
-        for i in range(5):
-            topFrame.columnconfigure(i, weight=1)
+        labelTf.grid(row=0, column=0)
+        Tf.grid(row=0, column=1)
 
+        for i in range(3):
+            topFrameRightUp.rowconfigure(i, weight=1)
+        for i in range(1,5):
+            topFrameRightUp.columnconfigure(i, weight=1)
+
+        for i in range(1):
+            topFrameRightDown.rowconfigure(i, weight=1)
+        for i in range(2):
+            topFrameRightDown.columnconfigure(i, weight=1)
 
     def __middleFrame(self):
         frameColor = '#23395B'
@@ -137,24 +157,28 @@ class TrayectoriaGUI(Toplevel):
         fontSize =("Arial", 15)
         middleFrame = Frame(self.__lefFrameParent, bg = frameColor)
         middleFrame.place(x=0,rely=0.3, width= self.width*0.3, height=self.height*0.3)
+        middleFrameUp = Frame(middleFrame, bg = frameColor)
+        middleFrameUp.place(x=0,y=0, width= self.width*0.3, height=self.height*0.3*0.8)
+        middleFrameDown = Frame(middleFrame, bg = frameColor)
+        middleFrameDown.place(x=0,rely=0.8, width= self.width*0.3, height=self.height*0.3*0.2)
         #Datos de entrada
-        labelA1 = Label(middleFrame, text="A1", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        A1 = Entry(middleFrame, textvariable=self.__valueBoxA1, bg = boxColor)
+        labelA1 = Label(middleFrameUp, text="A1", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        A1 = Entry(middleFrameUp, textvariable=self.__valueBoxA1, bg = boxColor)
 
-        labelA2 = Label(middleFrame, text="A2", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        A2 = Entry(middleFrame, textvariable=self.__valueBoxA2, bg = boxColor)
+        labelA2 = Label(middleFrameUp, text="A2", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        A2 = Entry(middleFrameUp, textvariable=self.__valueBoxA2, bg = boxColor)
 
-        labelA3 = Label(middleFrame, text="A3", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        A3 = Entry(middleFrame, textvariable=self.__valueBoxA3, bg = boxColor)
+        labelA3 = Label(middleFrameUp, text="A3", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        A3 = Entry(middleFrameUp, textvariable=self.__valueBoxA3, bg = boxColor)
 
-        labelV1 = Label(middleFrame, text="V1", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        V1 = Entry(middleFrame, textvariable=self.__valueBoxV1, bg = boxColor)
+        labelV1 = Label(middleFrameUp, text="V1", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        V1 = Entry(middleFrameUp, textvariable=self.__valueBoxV1, bg = boxColor)
 
-        labelV2 = Label(middleFrame, text="V2", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        V2 = Entry(middleFrame, textvariable=self.__valueBoxV2, bg = boxColor)
+        labelV2 = Label(middleFrameUp, text="V2", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        V2 = Entry(middleFrameUp, textvariable=self.__valueBoxV2, bg = boxColor)
 
-        labelV3 = Label(middleFrame, text="V3", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        V3 = Entry(middleFrame, textvariable=self.__valueBoxV3, bg = boxColor)
+        labelV3 = Label(middleFrameUp, text="V3", bg = frameColor, fg=foregroundLetter, font = fontSize)
+        V3 = Entry(middleFrameUp, textvariable=self.__valueBoxV3, bg = boxColor)
 
         #Grilla
         labelA1.grid(row=0, column=2)
@@ -172,19 +196,23 @@ class TrayectoriaGUI(Toplevel):
         V3.grid(row=3, column=6)
 
         #Botones
-        buttonCalculate = Button(middleFrame, text='Calcular', bg='#8EA8C3', fg = "black", command= self.buttonCalcular) 
-        buttonClear = Button(middleFrame, text='Clear', bg='#8EA8C3', fg = "black", command= self.buttonCalcular) 
+        buttonCalculate = Button(middleFrameDown, text='Calcular', bg='#8EA8C3', fg = "black", command= self.buttonCalcular) 
+        buttonClear = Button(middleFrameDown, text='Clear', bg='#8EA8C3', fg = "black", command= self.buttonCalcular) 
 
-        buttonCalculate.grid(row=4,column=1, columnspan=2, sticky="nsew")
-        buttonClear.grid(row=4,column=4, columnspan=2, sticky="nsew")
+        buttonCalculate.grid(row=1,column=0, sticky="nsew")
+        buttonClear.grid(row=1,column=1, sticky="nsew")
 
-        for i in range(5):
-            middleFrame.rowconfigure(i, weight=1)
-        for i in range(1,7):
-            middleFrame.columnconfigure(i, weight=1)
+        for i in range(4):
+            middleFrameUp.rowconfigure(i, weight=1)
+        for i in range(1,8):
+            middleFrameUp.columnconfigure(i, weight=1)
+
+        middleFrameDown.rowconfigure(1, weight=1)
+        for i in range(2):
+            middleFrameDown.columnconfigure(i, weight=1)
 
     def __bottomFrame(self):
-        bottomFrame = Frame(self.__lefFrameParent, bg = 'white')
+        bottomFrame = Frame(self.__lefFrameParent, bg = 'white', borderwidth=5, relief=SUNKEN)
         bottomFrame.place(x=0,rely=0.6, width= self.width*0.3, height=self.height*0.4)
         #The figure that will contain the plot
         fig2 = Figure(figsize =(10,10),dpi=100)
@@ -207,26 +235,45 @@ class TrayectoriaGUI(Toplevel):
         framePlots = Frame(self, bg = 'white')
         framePlots.place(relx=0.3,y=0, width = self.width*0.7, height = self.height)
 
+        framePlotUp = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
+        framePlotUp.place(x=0,y=0, width = self.width*0.7, height = self.height*0.33)
+
+        framePlotMiddle = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
+        framePlotMiddle.place(x=0,rely=(1/3), width = self.width*0.7, height = self.height*0.33)
+
+        framePlotDown = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
+        framePlotDown.place(x=0,rely=(2/3), width = self.width*0.7, height = self.height*0.33)
+
         #The figure that will contain the plot
         fig = Figure(figsize =(10,10),dpi=100)
-        plot1 = fig.add_subplot(311)
+        fig2 = Figure(figsize =(10,10),dpi=100)
+        fig3 = Figure(figsize =(10,10),dpi=100)
+        plot1 = fig.add_subplot(111)
         plot1.plot(np.arange(10), np.arange(10), 'bo')
         plot1.set_xlabel('x')
         plot1.set_ylabel('y')
 
-        plot2 = fig.add_subplot(312)
+        plot2 = fig2.add_subplot(111)
         plot2.plot(np.arange(10), np.arange(10), 'bo')
         plot2.set_xlabel('x')
         plot2.set_ylabel('y')
 
-        plot3 = fig.add_subplot(313)
+        plot3 = fig3.add_subplot(111)
         plot3.plot(np.arange(10), np.arange(10), 'bo')
         plot3.set_xlabel('x')
         plot3.set_ylabel('y')
 
-        canvas = FigureCanvasTkAgg(fig,master = framePlots)
+        canvas = FigureCanvasTkAgg(fig,master = framePlotUp)
         canvas.draw()
         canvas.get_tk_widget().pack(expand=True)
+
+        canvas2 = FigureCanvasTkAgg(fig2,master = framePlotMiddle)
+        canvas2.draw()
+        canvas2.get_tk_widget().pack(expand=True)
+
+        canvas3 = FigureCanvasTkAgg(fig3,master = framePlotDown)
+        canvas3.draw()
+        canvas3.get_tk_widget().pack(expand=True)
 
     def buttonCalcular(self):
         pass
