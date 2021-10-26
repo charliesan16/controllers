@@ -19,7 +19,8 @@ class TrayectoriaGUI(Toplevel):
         self.name = name
         self.controllerName = controllerName
         self.codo = codo
-        self.my_var = 0
+        self.my_var = IntVar() 
+        self.__flag = "arriba"
         self.__frameColor = '#23395B'
         self.__valueBoxXi = StringVar(0)
         self.__valueBoxXf = StringVar(0)
@@ -47,6 +48,9 @@ class TrayectoriaGUI(Toplevel):
         self.__valueBoxV1.set(0)
         self.__valueBoxV2.set(0)
         self.__valueBoxV3.set(0)
+        self.rbPolinomial = None
+        self.rbTrapezoidalA = None
+        self.rbTrapezoidalV = None
         self.__frameset()
 
     def __frameset(self):
@@ -55,6 +59,15 @@ class TrayectoriaGUI(Toplevel):
         #self.resizable(width=False, height=False)
         self.__leftFrame()
         self.__rightFrame()
+        self.__menu()
+
+    def __menu(self):
+        newMenu = Menu(self)
+        self.config(menu=newMenu)
+        menuCascada2 = Menu(newMenu, tearoff="off")
+        newMenu.add_cascade(label="Codo", menu=menuCascada2)
+        menuCascada2.add_command(label="Codo Arriba", command= self.elbowUp)
+        menuCascada2.add_command(label="Codo Abajo", command= self.elbowDown)
 
     def __leftFrame(self):
         self.__lefFrameParent = Frame(self, bg=self.__frameColor)
@@ -70,9 +83,10 @@ class TrayectoriaGUI(Toplevel):
         fontSize =("Arial", 15)
         topFrame = Frame(self.__lefFrameParent, bg = frameColor)
         topFrame.place(x=0,y=0, width= self.width*0.3, height=self.height*0.3)
-
         topFrameLeft = Frame(topFrame, bg = frameColor, borderwidth=5, relief=SUNKEN)
         topFrameLeft.place(x=0,y=0, width= self.width*0.3*0.3, height=self.height*0.3)
+        #topFrameLeftDown = Frame(topFrame, bg = frameColor, borderwidth=5, relief=SUNKEN)
+        #topFrameLeftDown.place(x=0,rely=0.4, width= self.width*0.3*0.3, height=self.height*0.3*0.6)
         topFrameBoxes = Frame(topFrame, bg=frameColor)
         topFrameBoxes.place(relx=0.3,y=0, width= self.width*0.3*0.7, height=self.height*0.3)
         topFrameRightUp = Frame(topFrameBoxes, bg = frameColor, borderwidth=5, relief=SUNKEN)
@@ -82,21 +96,29 @@ class TrayectoriaGUI(Toplevel):
 
         #Orientación
         ttk.Style().configure('Wild.TRadiobutton', background = frameColor, foreground=foregroundLetter)
-        rbCodoArriba = ttk.Radiobutton(topFrameLeft, text='Codo Arriba', variable=self.my_var, value=5, style = 'Wild.TRadiobutton')
-        rbCodoAbajo = ttk.Radiobutton(topFrameLeft, text='Codo Abajo', variable=self.my_var, value=10, style = 'Wild.TRadiobutton')
+        #rbCodoArriba = ttk.Radiobutton(topFrameLeftTop, text='Codo Arriba', variable=self.my_var, value=5, style = 'Wild.TRadiobutton')
+        #rbCodoAbajo = ttk.Radiobutton(topFrameLeftTop, text='Codo Abajo', variable=self.my_var, value=10, style = 'Wild.TRadiobutton')
 
-        rbCodoArriba.grid(row=0, column=0, sticky="we")
-        rbCodoAbajo.grid(row=1, column=0, sticky="we")
+        #rbCodoArriba.grid(row=0, column=0, sticky="we")
+        #rbCodoAbajo.grid(row=1, column=0, sticky="we")
         #Perfil
-        rbPolinomial = ttk.Radiobutton(topFrameLeft, text='Polinomial', variable=self.my_var, value=15, style = 'Wild.TRadiobutton')
-        rbTrapezoidalA = ttk.Radiobutton(topFrameLeft, text='Trapezoidal A', variable=self.my_var, value=20, style = 'Wild.TRadiobutton')
-        rbTrapezoidalV = ttk.Radiobutton(topFrameLeft, text='Trapezoidal V', variable=self.my_var, value=25, style = 'Wild.TRadiobutton')
+        
+        self.rbPolinomial = ttk.Radiobutton(topFrameLeft, text='Polinomial', variable=self.my_var, value=15, style = 'Wild.TRadiobutton')
+        self.rbTrapezoidalA = ttk.Radiobutton(topFrameLeft, text='Trapezoidal A', variable=self.my_var, value=20, style = 'Wild.TRadiobutton')
+        self.rbTrapezoidalV = ttk.Radiobutton(topFrameLeft, text='Trapezoidal V', variable=self.my_var, value=25, style = 'Wild.TRadiobutton')
 
-        rbPolinomial.grid(row=2, column=0, sticky="we")
-        rbTrapezoidalA.grid(row=3, column=0, sticky="we")
-        rbTrapezoidalV.grid(row=4, column=0, sticky="we")
+        self.rbPolinomial.invoke()
 
-        for i in range(5):
+        self.rbPolinomial.grid(row=0, column=0, sticky="we")
+        self.rbTrapezoidalA.grid(row=1, column=0, sticky="we")
+        self.rbTrapezoidalV.grid(row=2, column=0, sticky="we")
+
+        #for i in range(2):
+        #    topFrameLeftTop.rowconfigure(i, weight=1)
+        #for i in range(1):
+        #    topFrameLeftTop.columnconfigure(i, weight=1)
+
+        for i in range(3):
             topFrameLeft.rowconfigure(i, weight=1)
         for i in range(1):
             topFrameLeft.columnconfigure(i, weight=1)
@@ -277,3 +299,11 @@ class TrayectoriaGUI(Toplevel):
 
     def buttonCalcular(self):
         pass
+
+    def elbowUp(self):
+        self.__flag = "arriba"
+        print(self.__flag)
+
+    def elbowDown(self):
+        self.__flag = "abajo"
+        print(self.__flag)
