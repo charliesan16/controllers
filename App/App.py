@@ -528,5 +528,5 @@ class App(Tk):
         window.grab_set()
 
     def buttonPathPlanning(self):
-        window = TrayectoriaGUI(self, self.name, self.controllerName, self.__flag)
+        window = TrayectoriaGUI(self, self.name, self.controllerName, self.__flag, self.__l1, self.__l2, self.__l3)
         window.grab_set()

@@ -11,14 +11,18 @@ sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import Functions
 
 
+
 class TrayectoriaGUI(Toplevel):
-    def __init__(self, parent, name, controllerName, codo):
+    def __init__(self, parent, name, controllerName, codo, l1, l2, l3):
         super().__init__(parent)
         self.width = 1366
         self.height = 768
         self.name = name
         self.controllerName = controllerName
         self.codo = codo
+        self.__l1 = l1
+        self.__l2 = l2
+        self.__l3 = l3
         self.my_var = IntVar() 
         self.__flag = "arriba"
         self.__frameColor = '#23395B'
@@ -51,6 +55,15 @@ class TrayectoriaGUI(Toplevel):
         self.rbPolinomial = None
         self.rbTrapezoidalA = None
         self.rbTrapezoidalV = None
+        self.A1 = None
+        self.A2 = None
+        self.A3 = None
+        self.V1 = None
+        self.V2 = None
+        self.V3 = None
+        self.changeFlag = True
+        self.theta1i, self.theta2i, self.theta3i, self.d3i = None, None, None, None
+        self.theta1f, self.theta2f, self.theta3f, self.d3f = None, None, None, None
         self.__frameset()
 
     def __frameset(self):
@@ -103,9 +116,9 @@ class TrayectoriaGUI(Toplevel):
         #rbCodoAbajo.grid(row=1, column=0, sticky="we")
         #Perfil
         
-        self.rbPolinomial = ttk.Radiobutton(topFrameLeft, text='Polinomial', variable=self.my_var, value=15, style = 'Wild.TRadiobutton')
-        self.rbTrapezoidalA = ttk.Radiobutton(topFrameLeft, text='Trapezoidal A', variable=self.my_var, value=20, style = 'Wild.TRadiobutton')
-        self.rbTrapezoidalV = ttk.Radiobutton(topFrameLeft, text='Trapezoidal V', variable=self.my_var, value=25, style = 'Wild.TRadiobutton')
+        self.rbPolinomial = ttk.Radiobutton(topFrameLeft, text='Polinomial', variable=self.my_var, value=1, style = 'Wild.TRadiobutton', command=self.ShowChoice)
+        self.rbTrapezoidalA = ttk.Radiobutton(topFrameLeft, text='Trapezoidal A', variable=self.my_var, value=2, style = 'Wild.TRadiobutton', command=self.ShowChoice)
+        self.rbTrapezoidalV = ttk.Radiobutton(topFrameLeft, text='Trapezoidal V', variable=self.my_var, value=3, style = 'Wild.TRadiobutton', command=self.ShowChoice)
 
         self.rbPolinomial.invoke()
 
@@ -183,24 +196,25 @@ class TrayectoriaGUI(Toplevel):
         middleFrameUp.place(x=0,y=0, width= self.width*0.3, height=self.height*0.3*0.8)
         middleFrameDown = Frame(middleFrame, bg = frameColor)
         middleFrameDown.place(x=0,rely=0.8, width= self.width*0.3, height=self.height*0.3*0.2)
+
         #Datos de entrada
         labelA1 = Label(middleFrameUp, text="A1", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        A1 = Entry(middleFrameUp, textvariable=self.__valueBoxA1, bg = boxColor)
+        self.A1 = Entry(middleFrameUp, textvariable=self.__valueBoxA1, bg = boxColor, state='disable')
 
         labelA2 = Label(middleFrameUp, text="A2", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        A2 = Entry(middleFrameUp, textvariable=self.__valueBoxA2, bg = boxColor)
+        self.A2 = Entry(middleFrameUp, textvariable=self.__valueBoxA2, bg = boxColor, state='disable')
 
         labelA3 = Label(middleFrameUp, text="A3", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        A3 = Entry(middleFrameUp, textvariable=self.__valueBoxA3, bg = boxColor)
+        self.A3 = Entry(middleFrameUp, textvariable=self.__valueBoxA3, bg = boxColor, state='disable')
 
         labelV1 = Label(middleFrameUp, text="V1", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        V1 = Entry(middleFrameUp, textvariable=self.__valueBoxV1, bg = boxColor)
+        self.V1 = Entry(middleFrameUp, textvariable=self.__valueBoxV1, bg = boxColor, state='disable')
 
         labelV2 = Label(middleFrameUp, text="V2", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        V2 = Entry(middleFrameUp, textvariable=self.__valueBoxV2, bg = boxColor)
+        self.V2 = Entry(middleFrameUp, textvariable=self.__valueBoxV2, bg = boxColor, state='disable')
 
         labelV3 = Label(middleFrameUp, text="V3", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        V3 = Entry(middleFrameUp, textvariable=self.__valueBoxV3, bg = boxColor)
+        self.V3 = Entry(middleFrameUp, textvariable=self.__valueBoxV3, bg = boxColor, state='disable')
 
         #Grilla
         labelA1.grid(row=0, column=2)
@@ -210,12 +224,12 @@ class TrayectoriaGUI(Toplevel):
         labelV2.grid(row=2, column=4)
         labelV3.grid(row=2, column=6)
 
-        A1.grid(row=1, column=2)
-        A2.grid(row=1, column=4)
-        A3.grid(row=1, column=6)
-        V1.grid(row=3, column=2)
-        V2.grid(row=3, column=4)
-        V3.grid(row=3, column=6)
+        self.A1.grid(row=1, column=2)
+        self.A2.grid(row=1, column=4)
+        self.A3.grid(row=1, column=6)
+        self.V1.grid(row=3, column=2)
+        self.V2.grid(row=3, column=4)
+        self.V3.grid(row=3, column=6)
 
         #Botones
         buttonCalculate = Button(middleFrameDown, text='Calcular', bg='#8EA8C3', fg = "black", command= self.buttonCalcular) 
@@ -300,10 +314,61 @@ class TrayectoriaGUI(Toplevel):
     def buttonCalcular(self):
         pass
 
+
     def elbowUp(self):
         self.__flag = "arriba"
-        print(self.__flag)
+        self.calcular()
+        
 
     def elbowDown(self):
         self.__flag = "abajo"
-        print(self.__flag)
+        self.calcular()
+
+    def calcular(self):
+        if self.name == "Antropomorfico":
+            self.theta1i, self.theta2i, self.theta3i = self.inverse(self.__valueBoxXi.get(), self.__valueBoxYi.get(), self.__valueBoxZi.get())
+            self.theta1f, self.theta2f, self.theta3f = self.inverse(self.__valueBoxXf.get(), self.__valueBoxYf.get(), self.__valueBoxZf.get())
+            print(self.theta1i, self.theta2i, self.theta3i)
+            print(self.theta1f, self.theta2f, self.theta3f)
+        else:
+            self.theta1i, self.theta2i, self.d3i = self.inverse(self.__valueBoxXi.get(), self.__valueBoxYi.get(), self.__valueBoxZi.get())
+            self.theta1f, self.theta2f, self.d3f = self.inverse(self.__valueBoxXf.get(), self.__valueBoxYf.get(), self.__valueBoxZf.get())
+            print(self.theta1i, self.theta2i, self.d3i)
+            print(self.theta1f, self.theta2f, self.d3f)
+
+    def inverse(self, x, y, z):
+        P = np.array([x, y, z]).astype(float)
+        L = [self.__l1, self.__l2, self.__l3]
+        if self.__flag == "arriba":
+            value1, _, value2, _, value3, _ = Functions.inverseKinematics(self.name, P, L)
+        else:
+            _, value1, _, value2, _, value3 = Functions.inverseKinematics(self.name, P, L)
+        return value1, value2, value3
+    
+    def ShowChoice(self):
+        if self.my_var.get() == 1 and self.changeFlag == False:
+            self.A1.configure(state='disable')
+            self.A2.configure(state='disable')
+            self.A3.configure(state='disable')
+            self.V1.configure(state='disable')
+            self.V2.configure(state='disable')
+            self.V3.configure(state='disable')
+        elif self.my_var.get() == 2:
+            self.A1.configure(state='normal')
+            self.A2.configure(state='normal')
+            self.A3.configure(state='normal')
+            self.V1.configure(state='disable')
+            self.V2.configure(state='disable')
+            self.V3.configure(state='disable')
+            self.changeFlag = False
+        elif self.my_var.get() == 3:
+            print(self.my_var.get())
+            self.A1.configure(state='disable')
+            self.A2.configure(state='disable')
+            self.A3.configure(state='disable')
+            self.V1.configure(state='normal')
+            self.V2.configure(state='normal')
+            self.V3.configure(state='normal')
+            self.changeFlag = False
+        else:
+            pass
