@@ -6,9 +6,11 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 # Implement the default Matplotlib key bindings.
 from matplotlib.figure import Figure
+import FuncionesTrayectoria
 import sys, os
 sys.path.append(os.path.abspath(os.path.join('..', 'App')))
 from App import Functions
+
 
 
 
@@ -26,26 +28,26 @@ class TrayectoriaGUI(Toplevel):
         self.my_var = IntVar() 
         self.__flag = "arriba"
         self.__frameColor = '#23395B'
-        self.__valueBoxXi = StringVar(0)
-        self.__valueBoxXf = StringVar(0)
-        self.__valueBoxYi = StringVar(0)
-        self.__valueBoxYf = StringVar(0)
-        self.__valueBoxZi = StringVar(0)
-        self.__valueBoxZf = StringVar(0)
-        self.__valueBoxN = StringVar(0)
+        self.__valueBoxXi = DoubleVar(0)
+        self.__valueBoxXf = DoubleVar(0)
+        self.__valueBoxYi = DoubleVar(0)
+        self.__valueBoxYf = DoubleVar(0)
+        self.__valueBoxZi = DoubleVar(0)
+        self.__valueBoxZf = DoubleVar(0)
+        self.__valueBoxTf = DoubleVar(0)
         self.__valueBoxXi.set(0)
         self.__valueBoxXf.set(0)
         self.__valueBoxYi.set(0)
         self.__valueBoxYf.set(0)
         self.__valueBoxZi.set(0)
         self.__valueBoxZf.set(0)
-        self.__valueBoxN.set(0)
-        self.__valueBoxA1 = StringVar(0)
-        self.__valueBoxA2 = StringVar(0)
-        self.__valueBoxA3 = StringVar(0)
-        self.__valueBoxV1 = StringVar(0)
-        self.__valueBoxV2 = StringVar(0)
-        self.__valueBoxV3 = StringVar(0)
+        self.__valueBoxTf.set(0)
+        self.__valueBoxA1 = DoubleVar(0)
+        self.__valueBoxA2 = DoubleVar(0)
+        self.__valueBoxA3 = DoubleVar(0)
+        self.__valueBoxV1 = DoubleVar(0)
+        self.__valueBoxV2 = DoubleVar(0)
+        self.__valueBoxV3 = DoubleVar(0)
         self.__valueBoxA1.set(0)
         self.__valueBoxA2.set(0)
         self.__valueBoxA3.set(0)
@@ -64,6 +66,17 @@ class TrayectoriaGUI(Toplevel):
         self.changeFlag = True
         self.theta1i, self.theta2i, self.theta3i, self.d3i = None, None, None, None
         self.theta1f, self.theta2f, self.theta3f, self.d3f = None, None, None, None
+        self.n = 1000
+        self.dt = None
+        self.q1, self.q1p, self.q1pp = None, None, None
+        self.q2, self.q2p, self.q2pp = None, None, None
+        self.q3, self.q3p, self.q3pp = None, None, None
+        self.q1t1, self.q1pt1, self.q1ppt1 = None, None, None
+        self.q2t1, self.q2pt1, self.q2ppt1 = None, None, None
+        self.q3t1, self.q3pt1, self.q3ppt1 = None, None, None
+        self.q1t2, self.q1pt2, self.q1ppt2 = None, None, None
+        self.q2t2, self.q2pt2, self.q2ppt2 = None, None, None
+        self.q3t2, self.q3pt2, self.q3ppt2 = None, None, None
         self.__frameset()
 
     def __frameset(self):
@@ -156,7 +169,7 @@ class TrayectoriaGUI(Toplevel):
         Zf = Entry(topFrameRightUp, textvariable=self.__valueBoxZf, bg = boxColor)
 
         labelTf = Label(topFrameRightDown, text="tf", bg = frameColor, fg=foregroundLetter, font = fontSize)
-        Tf = Entry(topFrameRightDown, textvariable=self.__valueBoxN, bg = boxColor)
+        Tf = Entry(topFrameRightDown, textvariable=self.__valueBoxTf, bg = boxColor)
 
         #Grilla
         labelXi.grid(row=0, column=1)
@@ -233,7 +246,7 @@ class TrayectoriaGUI(Toplevel):
 
         #Botones
         buttonCalculate = Button(middleFrameDown, text='Calcular', bg='#8EA8C3', fg = "black", command= self.buttonCalcular) 
-        buttonClear = Button(middleFrameDown, text='Clear', bg='#8EA8C3', fg = "black", command= self.buttonCalcular) 
+        buttonClear = Button(middleFrameDown, text='Clear', bg='#8EA8C3', fg = "black", command= self.buttonClear) 
 
         buttonCalculate.grid(row=1,column=0, sticky="nsew")
         buttonClear.grid(row=1,column=1, sticky="nsew")
@@ -271,49 +284,58 @@ class TrayectoriaGUI(Toplevel):
         framePlots = Frame(self, bg = 'white')
         framePlots.place(relx=0.3,y=0, width = self.width*0.7, height = self.height)
 
-        framePlotUp = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
-        framePlotUp.place(x=0,y=0, width = self.width*0.7, height = self.height*0.33)
+        self.framePlotUp = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
+        self.framePlotUp.place(x=0,y=0, width = self.width*0.7, height = self.height*0.33)
 
-        framePlotMiddle = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
-        framePlotMiddle.place(x=0,rely=(1/3), width = self.width*0.7, height = self.height*0.33)
+        self.framePlotMiddle = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
+        self.framePlotMiddle.place(x=0,rely=(1/3), width = self.width*0.7, height = self.height*0.33)
 
-        framePlotDown = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
-        framePlotDown.place(x=0,rely=(2/3), width = self.width*0.7, height = self.height*0.33)
-
-        #The figure that will contain the plot
-        fig = Figure(figsize =(10,10),dpi=100)
-        fig2 = Figure(figsize =(10,10),dpi=100)
-        fig3 = Figure(figsize =(10,10),dpi=100)
-        plot1 = fig.add_subplot(111)
-        plot1.plot(np.arange(10), np.arange(10), 'bo')
-        plot1.set_xlabel('x')
-        plot1.set_ylabel('y')
-
-        plot2 = fig2.add_subplot(111)
-        plot2.plot(np.arange(10), np.arange(10), 'bo')
-        plot2.set_xlabel('x')
-        plot2.set_ylabel('y')
-
-        plot3 = fig3.add_subplot(111)
-        plot3.plot(np.arange(10), np.arange(10), 'bo')
-        plot3.set_xlabel('x')
-        plot3.set_ylabel('y')
-
-        canvas = FigureCanvasTkAgg(fig,master = framePlotUp)
-        canvas.draw()
-        canvas.get_tk_widget().pack(expand=True)
-
-        canvas2 = FigureCanvasTkAgg(fig2,master = framePlotMiddle)
-        canvas2.draw()
-        canvas2.get_tk_widget().pack(expand=True)
-
-        canvas3 = FigureCanvasTkAgg(fig3,master = framePlotDown)
-        canvas3.draw()
-        canvas3.get_tk_widget().pack(expand=True)
+        self.framePlotDown = Frame(framePlots, bg = 'white', borderwidth=5, relief=SUNKEN)
+        self.framePlotDown.place(x=0,rely=(2/3), width = self.width*0.7, height = self.height*0.33)
 
     def buttonCalcular(self):
-        pass
+        dt = self.__valueBoxTf.get()/self.n
+        if self.name == "Antropomorfico":
+            if self.my_var.get() == 1:
+                self.q1, self.q1p, self.q1pp = FuncionesTrayectoria.treyectoriaCuadratAntro(self.theta1i, self.theta1f, self.__valueBoxTf.get(), dt)
+                self.q2, self.q2p, self.q2pp = FuncionesTrayectoria.treyectoriaCuadratAntro(self.theta2i, self.theta2f, self.__valueBoxTf.get(), dt)
+                self.q3, self.q3p, self.q3pp = FuncionesTrayectoria.treyectoriaCuadratAntro(self.theta3i, self.theta3f, self.__valueBoxTf.get(), dt)
+                self.graficar(self.q1, self.q1p, self.q1pp, self.q2, self.q2p, self.q2pp, self.q3, self.q3p, self.q3pp)
+            elif self.my_var.get() == 2:
+                self.q1t2, self.q1pt2, self.q1ppt2 = FuncionesTrayectoria.trapes2Antropo(self.__valueBoxA1.get(), self.theta1i, self.theta1f, self.__valueBoxTf.get(), dt)
+                self.q2t2, self.q2pt2, self.q2ppt2 = FuncionesTrayectoria.trapes2Antropo(self.__valueBoxA2.get(), self.theta2i, self.theta2f, self.__valueBoxTf.get(), dt)
+                self.q3t2, self.q3pt2, self.q3ppt2 = FuncionesTrayectoria.trapes2Antropo(self.__valueBoxA3.get(), self.theta3i, self.theta3f, self.__valueBoxTf.get(), dt)
+                self.graficar(self.q1t2, self.q1pt2, self.q1ppt2, self.q2t2, self.q2pt2, self.q2ppt2, self.q3t2, self.q3pt2, self.q3ppt2)
+            elif self.my_var.get() == 3:
+                self.q1t1, self.q1pt1, self.q1ppt1 = FuncionesTrayectoria.trapes1Antropo(self.__valueBoxV1.get(), self.theta1i, self.theta1f, self.__valueBoxTf.get(), dt)
+                self.q2t1, self.q2pt1, self.q2ppt1 = FuncionesTrayectoria.trapes1Antropo(self.__valueBoxV2.get(), self.theta2i, self.theta2f, self.__valueBoxTf.get(), dt)
+                self.q3t1, self.q3pt1, self.q3ppt1 = FuncionesTrayectoria.trapes1Antropo(self.__valueBoxV3.get(), self.theta3i, self.theta3f, self.__valueBoxTf.get(), dt)
+                self.graficar(self.q1t1, self.q1pt1, self.q1ppt1, self.q2t1, self.q2pt1, self.q2ppt1, self.q3t1, self.q3pt1, self.q3ppt1)
+            else:
+                pass
+        else:
+            if self.my_var.get() == 1:
+                self.q1, self.q1p, self.q1pp = FuncionesTrayectoria.treyectoriaCuadratSCARA(self.theta1i, self.theta1f, self.__valueBoxTf.get(), dt)
+                self.q2, self.q2p, self.q2pp = FuncionesTrayectoria.treyectoriaCuadratSCARA(self.theta2i, self.theta2f, self.__valueBoxTf.get(), dt)
+                self.q3, self.q3p, self.q3pp = FuncionesTrayectoria.treyectoriaCuadratSCARA(self.d3i/100, self.d3f/100, self.__valueBoxTf.get(), dt)
+                self.graficar(self.q1, self.q1p, self.q1pp, self.q2, self.q2p, self.q2pp, self.q3, self.q3p, self.q3pp)
+            elif self.my_var.get() == 2:
+                self.q1t2, self.q1pt2, self.q1ppt2 = FuncionesTrayectoria.trapes2SCARA(self.__valueBoxA1.get(), self.theta1i, self.theta1f, self.__valueBoxTf.get(), dt)
+                self.q2t2, self.q2pt2, self.q2ppt2 = FuncionesTrayectoria.trapes2SCARA(self.__valueBoxA2.get(), self.theta2i, self.theta2f, self.__valueBoxTf.get(), dt)
+                self.q3t2, self.q3pt2, self.q3ppt2 = FuncionesTrayectoria.trapes2SCARA(self.__valueBoxA3.get(), self.d3i/100, self.d3f/100, self.__valueBoxTf.get(), dt)
+                print(self.q1t2, self.q1pt2, self.q1ppt2, self.q2t2, self.q2pt2, self.q2ppt2, self.q3t2, self.q3pt2, self.q3ppt2)
+                self.graficar(self.q1t2, self.q1pt2, self.q1ppt2, self.q2t2, self.q2pt2, self.q2ppt2, self.q3t2, self.q3pt2, self.q3ppt2)
+            elif self.my_var.get() == 3:
+                self.q1t1, self.q1pt1, self.q1ppt1 = FuncionesTrayectoria.trapes1SCARA(self.__valueBoxV1.get(), self.theta1i, self.theta1f, self.__valueBoxTf.get(), dt)
+                self.q2t1, self.q2pt1, self.q2ppt1 = FuncionesTrayectoria.trapes1SCARA(self.__valueBoxV2.get(), self.theta2i, self.theta2f, self.__valueBoxTf.get(), dt)
+                self.q3t1, self.q3pt1, self.q3ppt1 = FuncionesTrayectoria.trapes1SCARA(self.__valueBoxV3.get(), self.d3i/100, self.d3f/100, self.__valueBoxTf.get(), dt)
+                self.graficar(self.q1t1, self.q1pt1, self.q1ppt1, self.q2t1, self.q2pt1, self.q2ppt1, self.q3t1, self.q3pt1, self.q3ppt1)
+                pass
 
+        
+
+    def buttonClear(self):
+        pass
 
     def elbowUp(self):
         self.__flag = "arriba"
@@ -328,13 +350,9 @@ class TrayectoriaGUI(Toplevel):
         if self.name == "Antropomorfico":
             self.theta1i, self.theta2i, self.theta3i = self.inverse(self.__valueBoxXi.get(), self.__valueBoxYi.get(), self.__valueBoxZi.get())
             self.theta1f, self.theta2f, self.theta3f = self.inverse(self.__valueBoxXf.get(), self.__valueBoxYf.get(), self.__valueBoxZf.get())
-            print(self.theta1i, self.theta2i, self.theta3i)
-            print(self.theta1f, self.theta2f, self.theta3f)
         else:
             self.theta1i, self.theta2i, self.d3i = self.inverse(self.__valueBoxXi.get(), self.__valueBoxYi.get(), self.__valueBoxZi.get())
             self.theta1f, self.theta2f, self.d3f = self.inverse(self.__valueBoxXf.get(), self.__valueBoxYf.get(), self.__valueBoxZf.get())
-            print(self.theta1i, self.theta2i, self.d3i)
-            print(self.theta1f, self.theta2f, self.d3f)
 
     def inverse(self, x, y, z):
         P = np.array([x, y, z]).astype(float)
@@ -372,3 +390,38 @@ class TrayectoriaGUI(Toplevel):
             self.changeFlag = False
         else:
             pass
+    
+    def graficar(self, y1a1, y1a2, y1a3, y2a1, y2a2, y2a3, y3a1, y3a2, y3a3):
+        #The figure that will contain the plot
+        fig = Figure(figsize =(10,10),dpi=100)
+        fig2 = Figure(figsize =(10,10),dpi=100)
+        fig3 = Figure(figsize =(10,10),dpi=100)
+
+        xlin = np.linspace(0, self.__valueBoxTf.get(), self.n)
+
+        plot1 = fig.add_subplot(111)
+        plot1.plot(xlin, y1a1, 'bo', xlin, y1a2, 'bo', xlin, y1a3, 'bo')
+        plot1.set_xlabel('x')
+        plot1.set_ylabel('y')
+
+        plot2 = fig2.add_subplot(111)
+        plot2.plot(xlin, y2a1, 'bo', xlin, y2a2, 'bo', xlin, y2a3, 'bo')
+        plot2.set_xlabel('x')
+        plot2.set_ylabel('y')
+
+        plot3 = fig3.add_subplot(111)
+        plot3.plot(xlin, y3a1, 'bo', xlin, y3a2, 'bo', xlin, y3a3, 'bo')
+        plot3.set_xlabel('x')
+        plot3.set_ylabel('y')
+
+        canvas = FigureCanvasTkAgg(fig,master = self.framePlotUp)
+        canvas.draw()
+        canvas.get_tk_widget().pack(expand=True)
+
+        canvas2 = FigureCanvasTkAgg(fig2,master = self.framePlotMiddle)
+        canvas2.draw()
+        canvas2.get_tk_widget().pack(expand=True)
+
+        canvas3 = FigureCanvasTkAgg(fig3,master = self.framePlotDown)
+        canvas3.draw()
+        canvas3.get_tk_widget().pack(expand=True)
